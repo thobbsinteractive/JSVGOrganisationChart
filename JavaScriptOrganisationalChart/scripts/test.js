@@ -8,6 +8,6 @@
     }
 
 
-    var chart = new JOrganisationChart(document.getElementById("myCanvas"), charData);
+    var chart = new JOrganisationChart($("#mySVG"), charData);
 
 });

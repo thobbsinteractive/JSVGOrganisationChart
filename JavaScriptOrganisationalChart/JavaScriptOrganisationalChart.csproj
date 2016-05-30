@@ -81,6 +81,7 @@
     <Content Include="scripts\jquery-2.2.3.js" />
     <Content Include="scripts\jquery-2.2.3.min.js" />
     <Content Include="scripts\test.js" />
+    <None Include="scripts\_references.js" />
     <Content Include="Test.html" />
     <Content Include="Web.config" />
   </ItemGroup>
