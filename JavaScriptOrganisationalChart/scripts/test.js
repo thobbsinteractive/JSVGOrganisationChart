@@ -3,7 +3,7 @@
     var charData = {
         group: {
             name: "Test1",
-            nodes: [{title:"Timmys Test", text:["Hit me baby","one more time"]}]
+            nodes: [{ title: "Mr Director", text: ["Director", "Paid loads"] }, { title: "Mrs Director", text: ["Owner", "Owns most of Russia"] }]
         }
     }
 

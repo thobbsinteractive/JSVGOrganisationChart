@@ -25,7 +25,9 @@ function JOrganisationChart(svgElement, chartData, x, y)
 	{
 		if (chartData.group != undefined)
 		{
-		    this.drawGroup(200, 20, svgElement, chartData.group)
+		    var dimensions = this.calculateGroupSize(chartData.group);
+
+		    this.drawGroup(dimensions.width/2, 20, svgElement, chartData.group)
 		}
 	}
 }
@@ -74,7 +76,7 @@ JOrganisationChart.prototype.calculateNodeSize = function (nodeData) {
 			for (var i = 0; i < nodeData.text.length;i++)
 			{
 				carrageLoc = carrageLoc + this.nodeTextSize;
-				lineWidth = this.calculateTextWidth(nodeData.text,this.nodeTextSize);
+				lineWidth = this.calculateTextWidth(nodeData.text[i],this.nodeTextSize);
 				if (dimensions.width < lineWidth)
 				{
 					dimensions.width = lineWidth;
