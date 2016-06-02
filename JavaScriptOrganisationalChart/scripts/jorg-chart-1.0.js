@@ -1,25 +1,39 @@
-﻿
-
-function JOrganisationChart(svgElement, chartData, x, y)
+﻿function JOrganisationChart(svgElement, chartData, settings)
 {
-	this.x = x;
-	this.y = y;
+    this.svgElement = svgElement;
 
+    //Defaults
 	this.chartAlign = "centre";
-
-	this.nodeTitleSize = 40; //Default to 30px
+	this.nodeTitleSize = 30; //Default to 30px
 	this.nodeLineSpacing = 0;
-	this.nodeTextSize = 30; //Default to 20px
+	this.nodeTextSize = 20; //Default to 20px
 	this.nodePadding = 10; //Default to 10px
 	this.nodeMargin = 10; //Default to 10px
 	this.nodeFont = "Arial";
-	this.svgElement = svgElement;
-	this.nodeBackGroundColour = "rgba(50,50,125,0.8)"
-	this.nodeBorderColour = "rgba(0,0,50,1)"
 	this.nodeTextColour = "rgba(0,0,0,1)"
-	this.groupBackGroundColour = "rgba(50,50,125,0.8)"
-	this.groupBorderColour = "rgba(0,0,50,1)"
+	this.nodeStyle = "fill:rgba(50,50,125,0.8);stroke:rgba(0,0,50,1);stroke-width:1;";
+	this.groupFont = "Arial";
 	this.groupTextColour = "rgba(0,0,0,1)"
+	this.groupPadding = 20; //Default to 20px
+	this.groupStyle = "fill:rgba(50,50,125,0.8);stroke:rgba(0,0,50,1);stroke-width:2;";
+	this.chartPadding = 30;
+
+	if (settings != undefined) {
+	    if (settings.chartAlign != undefined) { this.chartAlign = settings.chartAlign };
+	    if (settings.nodeTitleSize != undefined) { this.nodeTitleSize = settings.nodeTitleSize };
+	    if (settings.nodeLineSpacing != undefined) { this.nodeLineSpacing = settings.nodeLineSpacing };
+	    if (settings.nodeTextSize != undefined) { this.nodeTextSize = settings.nodeTextSize };
+	    if (settings.nodePadding != nodePadding) { this.nodePadding = settings.nodePadding };
+	    if (settings.nodeMargin != undefined) { this.nodeMargin = settings.nodeMargin };
+	    if (settings.nodeFont != undefined) { this.nodeFont = settings.nodeFont };
+	    if (settings.groupFont != undefined) { this.groupFont = settings.groupFont };
+	    if (settings.nodeStyle != undefined) { this.nodeStyle = settings.nodeStyle };
+	    if (settings.groupStyle != undefined) { this.groupStyle = settings.groupStyle };
+	    if (settings.nodeTextColour != undefined) { this.nodeTextColour = settings.nodeTextColour };
+	    if (settings.groupTextColour != undefined) { this.groupTextColour = settings.groupTextColour };
+	    if (settings.groupPadding != undefined) { this.groupPadding = settings.groupPadding };
+	    if (settings.chartPadding != undefined) { this.chartPadding = settings.chartPadding };
+	}
 
 	if (chartData != undefined)
 	{
@@ -27,7 +41,7 @@ function JOrganisationChart(svgElement, chartData, x, y)
 		{
 		    var dimensions = this.calculateGroupSize(chartData.group);
 
-		    this.drawGroup(dimensions.width/2, 20, svgElement, chartData.group)
+		    this.drawGroup(this.chartPadding + dimensions.width / 2, this.chartPadding, svgElement, chartData.group)
 		}
 	}
 }
@@ -36,19 +50,20 @@ JOrganisationChart.prototype.calculateGroupSize = function (group) {
     var dimensions = { width: 0, height: 0 };
 
     if (group != undefined) {
-        dimensions.width = this.nodeMargin;
+        dimensions.width = this.groupPadding * 2;
 
         if (group.nodes != undefined && group.nodes.length > 0) {
             for (var i = 0; i < group.nodes.length; i++) {
                 var nodeDimensions = this.calculateNodeSize(group.nodes[i]);
 
-                dimensions.width = dimensions.width + nodeDimensions.width + this.nodeMargin;
+                dimensions.width = dimensions.width + nodeDimensions.width + (this.nodeMargin*2);
+
                 if (nodeDimensions.height > dimensions.height)
                 {
                     dimensions.height = nodeDimensions.height;
                 }
             }
-            dimensions.height = dimensions.height + (this.nodeMargin*2);
+            dimensions.height = dimensions.height + (this.nodeMargin * 2) + (this.groupPadding * 2);
         }
     }
 
@@ -111,18 +126,24 @@ JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group) {
         groupBoxSVG.setAttribute('y', cy);
         groupBoxSVG.setAttribute('width', grpDimensions.width);
         groupBoxSVG.setAttribute('height', grpDimensions.height);
-        groupBoxSVG.setAttribute("style", "fill:" + this.groupBackGroundColour + ";stroke:" + this.groupBorderColour + ";stroke-width:2;");
+        groupBoxSVG.setAttribute("style", this.groupStyle);
 
         svgElement.append(groupBoxSVG);
 
-        var ncx = (cx - (grpDimensions.width / 2)) + this.nodeMargin;
+        var ncx = (cx - (grpDimensions.width / 2)) + this.groupPadding;
+        var ncy = (cy + this.groupPadding)
+
         if (group.nodes != undefined && group.nodes.length > 0) {
+
+            ncy = ncy + this.nodeMargin;
+            //Draw Row
             for (var i = 0; i < group.nodes.length; i++) {
                 var nodeDimensions = this.calculateNodeSize(group.nodes[i]);
-                ncx = ncx + (nodeDimensions.width / 2);
-                this.drawNode(ncx, cy + this.nodeMargin, this.svgElement, group.nodes[i]);
+                ncx = ncx + (nodeDimensions.width / 2) + this.nodeMargin;
+                this.drawNode(ncx, ncy, this.svgElement, group.nodes[i]);
                 ncx = ncx + (nodeDimensions.width / 2) + this.nodeMargin;
             }
+            ncy = ncy + this.nodeMargin;
         }
     }
 }
@@ -139,7 +160,7 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData) 
 		nodeBoxSVG.setAttribute('y', cy);
 		nodeBoxSVG.setAttribute('width', dimensions.width);
 		nodeBoxSVG.setAttribute('height', dimensions.height);
-		nodeBoxSVG.setAttribute("style", "fill:" + this.nodeBackGroundColour + ";stroke:" + this.nodeBorderColour + ";stroke-width:2;");
+		nodeBoxSVG.setAttribute("style", this.nodeStyle);
 
 		svgElement.append(nodeBoxSVG);
 
