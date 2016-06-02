@@ -3,85 +3,137 @@
     this.svgElement = svgElement;
 
     //Defaults
-	this.chartAlign = "centre";
-	this.nodeTitleSize = 30; //Default to 30px
-	this.nodeLineSpacing = 0;
-	this.nodeTextSize = 20; //Default to 20px
-	this.nodePadding = 10; //Default to 10px
-	this.nodeMargin = 10; //Default to 10px
-	this.nodeFont = "Arial";
-	this.nodeTextColour = "rgba(0,0,0,1)"
-	this.nodeStyle = "fill:rgba(50,50,125,0.8);stroke:rgba(0,0,50,1);stroke-width:1;";
-	this.groupFont = "Arial";
-	this.groupTextColour = "rgba(0,0,0,1)"
-	this.groupPadding = 20; //Default to 20px
-	this.groupStyle = "fill:rgba(50,50,125,0.8);stroke:rgba(0,0,50,1);stroke-width:2;";
-	this.chartPadding = 30;
+    this.settings = {
+        chartAlign : "centre",
+        nodeTitleSize : 30, //Default to 30px
+        nodeLineSpacing : 0,
+        nodeTextSize : 20, //Default to 20px
+        nodePadding : 10, //Default to 10px
+        nodeMargin : 10, //Default to 10px
+        nodeFont : "Arial",
+        nodeTextColour : "rgba(0,0,0,1)",
+        nodeStyle : "fill:rgba(50,50,125,0.8);stroke:rgba(0,0,50,1);stroke-width:1;",
+        groupFont : "Arial",
+        groupTextColour : "rgba(0,0,0,1)",
+        groupPadding : 20, //Default to 20px
+        groupStyle : "fill:rgba(50,50,125,0.8);stroke:rgba(0,0,50,1);stroke-width:2;",
+        chartPadding : 30
+    }
 
 	if (settings != undefined) {
-	    if (settings.chartAlign != undefined) { this.chartAlign = settings.chartAlign };
-	    if (settings.nodeTitleSize != undefined) { this.nodeTitleSize = settings.nodeTitleSize };
-	    if (settings.nodeLineSpacing != undefined) { this.nodeLineSpacing = settings.nodeLineSpacing };
-	    if (settings.nodeTextSize != undefined) { this.nodeTextSize = settings.nodeTextSize };
-	    if (settings.nodePadding != nodePadding) { this.nodePadding = settings.nodePadding };
-	    if (settings.nodeMargin != undefined) { this.nodeMargin = settings.nodeMargin };
-	    if (settings.nodeFont != undefined) { this.nodeFont = settings.nodeFont };
-	    if (settings.groupFont != undefined) { this.groupFont = settings.groupFont };
-	    if (settings.nodeStyle != undefined) { this.nodeStyle = settings.nodeStyle };
-	    if (settings.groupStyle != undefined) { this.groupStyle = settings.groupStyle };
-	    if (settings.nodeTextColour != undefined) { this.nodeTextColour = settings.nodeTextColour };
-	    if (settings.groupTextColour != undefined) { this.groupTextColour = settings.groupTextColour };
-	    if (settings.groupPadding != undefined) { this.groupPadding = settings.groupPadding };
-	    if (settings.chartPadding != undefined) { this.chartPadding = settings.chartPadding };
+	    if (settings.chartAlign != undefined) { this.settings.chartAlign = settings.chartAlign };
+	    if (settings.nodeTitleSize != undefined) { this.settings.nodeTitleSize = settings.nodeTitleSize };
+	    if (settings.nodeLineSpacing != undefined) { this.settings.nodeLineSpacing = settings.nodeLineSpacing };
+	    if (settings.nodeTextSize != undefined) { this.settings.nodeTextSize = settings.nodeTextSize };
+	    if (settings.nodePadding != nodePadding) { this.settings.nodePadding = settings.nodePadding };
+	    if (settings.nodeMargin != undefined) { this.settings.nodeMargin = settings.nodeMargin };
+	    if (settings.nodeFont != undefined) { this.settings.nodeFont = settings.nodeFont };
+	    if (settings.groupFont != undefined) { this.settings.groupFont = settings.groupFont };
+	    if (settings.nodeStyle != undefined) { this.settings.nodeStyle = settings.nodeStyle };
+	    if (settings.groupStyle != undefined) { this.settings.groupStyle = settings.groupStyle };
+	    if (settings.nodeTextColour != undefined) { this.settings.nodeTextColour = settings.nodeTextColour };
+	    if (settings.groupTextColour != undefined) { this.settings.groupTextColour = settings.groupTextColour };
+	    if (settings.groupPadding != undefined) { this.settings.groupPadding = settings.groupPadding };
+	    if (settings.chartPadding != undefined) { this.settings.chartPadding = settings.chartPadding };
 	}
 
 	if (chartData != undefined)
 	{
 		if (chartData.group != undefined)
 		{
-		    var dimensions = this.calculateGroupSize(chartData.group);
+		    var dimensions = this.calculateGroupSize(chartData.group, this.settings);
 
-		    this.drawGroup(this.chartPadding + dimensions.width / 2, this.chartPadding, svgElement, chartData.group)
+		    this.drawGroup(this.settings.chartPadding + dimensions.width / 2, this.settings.chartPadding, svgElement, chartData.group, this.settings)
 		}
 	}
 }
 
-JOrganisationChart.prototype.calculateGroupSize = function (group) {
+JOrganisationChart.prototype.calculateGroupSize = function (group, settings) {
     var dimensions = { width: 0, height: 0 };
 
     if (group != undefined) {
-        dimensions.width = this.groupPadding * 2;
+
+        dimensions.width = settings.groupPadding;
+        dimensions.height = settings.groupPadding;
 
         if (group.nodes != undefined && group.nodes.length > 0) {
-            for (var i = 0; i < group.nodes.length; i++) {
-                var nodeDimensions = this.calculateNodeSize(group.nodes[i]);
 
-                dimensions.width = dimensions.width + nodeDimensions.width + (this.nodeMargin*2);
+            dimensions.height = dimensions.height + settings.nodePadding;
+            //Size of this row           
+            var rowDimensions = this.calculateNodeMaxRowSize(group.nodes, settings)
+            dimensions.width = rowDimensions.width;
+            dimensions.width = dimensions.width + settings.nodePadding;
 
-                if (nodeDimensions.height > dimensions.height)
-                {
-                    dimensions.height = nodeDimensions.height;
-                }
-            }
-            dimensions.height = dimensions.height + (this.nodeMargin * 2) + (this.groupPadding * 2);
+            dimensions.height = dimensions.height + rowDimensions.height;
+            dimensions.height = dimensions.height + settings.nodePadding;
         }
     }
 
     return dimensions;
 }
 
-JOrganisationChart.prototype.calculateNodeSize = function (nodeData) {
+JOrganisationChart.prototype.calculateNodeRowSize = function (nodes, settings) {
+
+    var dimensions = { width: 0, height: 0 };
+
+    if ((nodes != undefined) && (nodes.length > 0)) {
+        dimensions.height = settings.nodeMargin;
+        dimensions.width = settings.nodeMargin;
+
+        for (var i = 0; i < nodes.length; i++) {
+            var nodeDimensions = this.calculateNodeSize(nodes[i], settings);
+
+            dimensions.width = dimensions.width + nodeDimensions.width;
+
+            if (nodeDimensions.height > dimensions.height) {
+                dimensions.height = nodeDimensions.height;
+            }
+
+            dimensions.width = dimensions.width + settings.nodeMargin; 
+        }
+
+        dimensions.height = dimensions.height + settings.nodeMargin;
+    }
+    return dimensions;
+}
+
+JOrganisationChart.prototype.calculateNodeMaxRowSize = function (nodes, settings) {
+
+    var dimensions = { width: 0, height: 0 };
+
+    if((nodes != undefined)&&(nodes.length > 0))
+    {
+        var nodeRowSize = this.calculateNodeRowSize(nodes, settings);
+
+        dimensions.width = nodeRowSize.width;
+        dimensions.height = nodeRowSize.height;
+
+        for (var i = 0; i < nodes.length; i++) {
+            
+            if (nodes[i].childNodes != undefined && nodes[i].childNodes.length > 0) {
+
+                var childDimensions = JOrganisationChart.prototype.calculateNodeMaxRowSize(nodes[i].childNodes, settings)
+
+                dimensions.width = dimensions.width + childDimensions.width;
+                dimensions.height = dimensions.height + childDimensions.height;
+            }
+        }
+    }
+    return dimensions;
+}
+
+JOrganisationChart.prototype.calculateNodeSize = function (nodeData, settings) {
 	var dimensions = { width: 0, height: 0 };
 
 	if (nodeData != undefined)
 	{
-		var carrageLoc = this.nodePadding;
+	    var carrageLoc = settings.nodePadding;
          
 		//Measure Width (max line width + padding)
 		if (nodeData.title != undefined && nodeData.title.length > 0)
 		{
-		    dimensions.width = this.calculateTextWidth(nodeData.title, this.nodeTitleSize);
-		    carrageLoc = carrageLoc + this.nodeTitleSize + this.nodeLineSpacing;
+		    dimensions.width = this.calculateTextWidth(nodeData.title, settings.nodeTitleSize);
+		    carrageLoc = carrageLoc + settings.nodeTitleSize + settings.nodeLineSpacing;
 		}
 
 		if (nodeData.text != undefined && nodeData.text.length > 0)
@@ -90,8 +142,8 @@ JOrganisationChart.prototype.calculateNodeSize = function (nodeData) {
 
 			for (var i = 0; i < nodeData.text.length;i++)
 			{
-				carrageLoc = carrageLoc + this.nodeTextSize;
-				lineWidth = this.calculateTextWidth(nodeData.text[i],this.nodeTextSize);
+			    carrageLoc = carrageLoc + settings.nodeTextSize;
+			    lineWidth = this.calculateTextWidth(nodeData.text[i], settings.nodeTextSize);
 				if (dimensions.width < lineWidth)
 				{
 					dimensions.width = lineWidth;
@@ -99,12 +151,12 @@ JOrganisationChart.prototype.calculateNodeSize = function (nodeData) {
 
 				if (i < (nodeData.text.length -1))
 				{
-				    carrageLoc = carrageLoc + this.nodeLineSpacing;
+				    carrageLoc = carrageLoc + settings.nodeLineSpacing;
 				}
 			}
 		}
-		carrageLoc = carrageLoc + this.nodePadding;
-		dimensions.width = dimensions.width + (this.nodePadding * 2);
+		carrageLoc = carrageLoc + settings.nodePadding;
+		dimensions.width = dimensions.width + (settings.nodePadding * 2);
 		dimensions.height = carrageLoc;
 	}
 
@@ -116,9 +168,9 @@ JOrganisationChart.prototype.calculateTextWidth = function(text,fontSize)
     return text.length * (fontSize / 2);
 }
 
-JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group) {
+JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group, settings) {
     if (group != undefined) {
-        var grpDimensions = this.calculateGroupSize(group)
+        var grpDimensions = this.calculateGroupSize(group, settings)
 
         //Draw group box
         var groupBoxSVG = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -126,33 +178,58 @@ JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group) {
         groupBoxSVG.setAttribute('y', cy);
         groupBoxSVG.setAttribute('width', grpDimensions.width);
         groupBoxSVG.setAttribute('height', grpDimensions.height);
-        groupBoxSVG.setAttribute("style", this.groupStyle);
+        groupBoxSVG.setAttribute("style", settings.groupStyle);
 
         svgElement.append(groupBoxSVG);
 
-        var ncx = (cx - (grpDimensions.width / 2)) + this.groupPadding;
-        var ncy = (cy + this.groupPadding)
+        var ncy = (cy + settings.groupPadding)
 
         if (group.nodes != undefined && group.nodes.length > 0) {
 
-            ncy = ncy + this.nodeMargin;
             //Draw Row
-            for (var i = 0; i < group.nodes.length; i++) {
-                var nodeDimensions = this.calculateNodeSize(group.nodes[i]);
-                ncx = ncx + (nodeDimensions.width / 2) + this.nodeMargin;
-                this.drawNode(ncx, ncy, this.svgElement, group.nodes[i]);
-                ncx = ncx + (nodeDimensions.width / 2) + this.nodeMargin;
-            }
-            ncy = ncy + this.nodeMargin;
+            this.drawNodeRow(cx,cy,svgElement,group.nodes,settings)
         }
     }
 }
 
-JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData) {
+JOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, nodes, settings) {
+
+    if (nodes != undefined && nodes.length > 0)
+    {
+        var nodeRowDimensions = this.calculateNodeRowSize(nodes, settings);
+
+        var ncx = cx - (nodeRowDimensions.width / 2);
+        var ncy = cy + settings.nodeMargin;
+
+        //Draw Row
+        for (var i = 0; i < nodes.length; i++) {
+            var nodeDimensions = this.calculateNodeSize(nodes[i], settings);
+            ncx = ncx + (nodeDimensions.width / 2) + settings.nodeMargin;
+            this.drawNode(ncx, ncy, svgElement, nodes[i], settings);
+
+            //Draw childern
+            if (nodes[i].childNodes != undefined && nodes[i].childNodes.length > 0) {
+
+                this.drawNodeRow(ncx, ncy + nodeRowDimensions.height, svgElement, nodes[i].childNodes, settings);
+                var childRowDimensions = this.calculateNodeRowSize(nodes[i].childNodes, settings);
+                ncx = ncx + (childRowDimensions.width / 2) + settings.nodeMargin;
+
+            } else
+            {
+                ncx = ncx + (nodeDimensions.width / 2) + settings.nodeMargin;
+            }
+        }
+
+        ncy = ncy + settings.nodeMargin;
+
+    }
+}
+
+JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, settings) {
 
     if (nodeData != undefined && svgElement != undefined)
 	{
-		var dimensions = this.calculateNodeSize(nodeData);
+        var dimensions = this.calculateNodeSize(nodeData, settings);
 
         //Draw node box
 		var nodeBoxSVG = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -160,51 +237,51 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData) 
 		nodeBoxSVG.setAttribute('y', cy);
 		nodeBoxSVG.setAttribute('width', dimensions.width);
 		nodeBoxSVG.setAttribute('height', dimensions.height);
-		nodeBoxSVG.setAttribute("style", this.nodeStyle);
+		nodeBoxSVG.setAttribute("style", settings.nodeStyle);
 
 		svgElement.append(nodeBoxSVG);
 
-		var carrageLoc = cy + this.nodePadding;
+		var carrageLoc = cy + settings.nodePadding;
 
 		if (nodeData.title != undefined && nodeData.title.length > 0) {
 
-		    carrageLoc = carrageLoc + (this.nodeTitleSize * 0.75);
+		    carrageLoc = carrageLoc + (settings.nodeTitleSize * 0.75);
 		    //Render Title
 		    var nodeTitleSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
 		    nodeTitleSVG.setAttribute('text-anchor', 'middle');
 		    nodeTitleSVG.setAttribute('alignment-baseline', 'central');
 		    nodeTitleSVG.setAttribute('x', cx);
 		    nodeTitleSVG.setAttribute('y', carrageLoc);
-		    nodeTitleSVG.setAttribute("fill", this.nodeTextColour);
-		    nodeTitleSVG.setAttribute("style", "font-family:" + this.nodeFont + "; font-size:" + this.nodeTitleSize + "px;");
+		    nodeTitleSVG.setAttribute("fill", settings.nodeTextColour);
+		    nodeTitleSVG.setAttribute("style", "font-family:" + settings.nodeFont + "; font-size:" + settings.nodeTitleSize + "px;");
 		    nodeTitleSVG.textContent = nodeData.title;
 
 		    svgElement.append(nodeTitleSVG);
 
-		    carrageLoc = carrageLoc + (this.nodeTitleSize * 0.25);
-		    carrageLoc = carrageLoc + this.nodeLineSpacing;
+		    carrageLoc = carrageLoc + (settings.nodeTitleSize * 0.25);
+		    carrageLoc = carrageLoc + settings.nodeLineSpacing;
 		}
 
         //Render other text lines
         if (nodeData.text != undefined && nodeData.text.length > 0) {
             for (var i = 0; i < nodeData.text.length; i++) {
 
-                carrageLoc = carrageLoc + (this.nodeTextSize * 0.75);
+                carrageLoc = carrageLoc + (settings.nodeTextSize * 0.75);
 
                 var nodeTextSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
                 nodeTextSVG.setAttribute('text-anchor', 'middle');
                 nodeTextSVG.setAttribute('alignment-baseline', 'central');
                 nodeTextSVG.setAttribute('x', cx);
                 nodeTextSVG.setAttribute('y', carrageLoc);
-                nodeTextSVG.setAttribute("fill", this.nodeTextColour);
-                nodeTextSVG.setAttribute("style", "font-family:" + this.nodeFont + "; font-size:" + this.nodeTextSize + "px;");
+                nodeTextSVG.setAttribute("fill", settings.nodeTextColour);
+                nodeTextSVG.setAttribute("style", "font-family:" + settings.nodeFont + "; font-size:" + settings.nodeTextSize + "px;");
                 nodeTextSVG.textContent = nodeData.text[i];
                 svgElement.append(nodeTextSVG);
 
-                carrageLoc = carrageLoc + (this.nodeTextSize * 0.25);
+                carrageLoc = carrageLoc + (settings.nodeTextSize * 0.25);
 
                 if (i < (nodeData.text.length - 1)) {
-                    carrageLoc = carrageLoc + this.nodeLineSpacing;
+                    carrageLoc = carrageLoc + settings.nodeLineSpacing;
                 }
             }
         }

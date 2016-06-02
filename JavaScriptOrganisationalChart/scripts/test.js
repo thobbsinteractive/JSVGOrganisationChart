@@ -3,7 +3,30 @@
     var charData = {
         group: {
             name: "Test1",
-            nodes: [{ title: "Mr Director", text: ["Director", "Paid loads"] }, { title: "Mrs Director", text: ["Owner", "Owns most of Russia"] }]
+            nodes: [
+                {
+                    title: "Mr Director", text: ["Director", "Paid loads"], childNodes:
+                        [
+                            { title: "The Cleaner", text: ["Middle Manager 1", "Paid a bit"] },
+                            { title: "The Partner", text: ["Middle Manager 2", "Paid a bit"] },
+                            { title: "The Another", text: ["Middle Manager 3", "Paid a bit"] },
+                            {
+                                title: "The Johnson", text: ["Middle Manager 4", "Paid a bit"], childNodes:
+                                    [
+                                        { title: "Johnson", text: ["And Johnson", "Paid some"] }
+                                    ]
+                            }
+                        ]
+                },
+                {
+                    title: "Mrs Director", text: ["Owner", "Owns most of Russia"], childNodes:
+                          [
+                              { title: "The Manager", text: ["Manager 1", "Paid a bit more"] },
+                              { title: "The Money", text: ["Accountant", "Paid a lot"] }
+                          ]
+                },
+                { title: "VP", text: ["Owner", "Owns most of Europe"] }
+            ]
         }
     }
 
