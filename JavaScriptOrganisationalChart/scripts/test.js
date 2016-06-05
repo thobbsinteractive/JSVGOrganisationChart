@@ -7,7 +7,12 @@
                 {
                     title: "Mr Director", text: ["Director", "Paid loads"], childNodes:
                         [
-                            { title: "The Cleaner", text: ["Middle Manager 1", "Paid a bit"] },
+                            { title: "The Cleaner", text: ["Middle Manager 1", "Paid a bit"], childNodes:
+                                    [
+                                        { title: "The great Johnson", text: ["And Johnson", "Paid some"] },
+                                        { title: "The less greate Johnson", text: ["And Johnson", "Paid some"] }
+                                    ]
+                            },
                             { title: "The Partner", text: ["Middle Manager 2", "Paid a bit"] },
                             { title: "The Another", text: ["Middle Manager 3", "Paid a bit"] },
                             {
