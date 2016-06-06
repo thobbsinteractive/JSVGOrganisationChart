@@ -1,7 +1,8 @@
 ﻿$(document).ready(function(){
 
     var charData = {
-        group: {
+        groups: [
+            {
             name: "Test1",
             nodes: [
                 {
@@ -31,8 +32,49 @@
                           ]
                 },
                 { title: "VP", text: ["Owner", "Owns most of Europe"] }
+            ],
+            childGroups:[
+                {
+                    name: "Test 2",
+                    nodes: [
+                        {
+                            title: "Business Manager", text: ["BM", "Does Stuff"], childNodes:
+                            [
+                              { title: "Subordinate 1", text: ["Subordinate", "Paid"] },
+                              { title: "Subordinate 2", text: ["Subordinate", "Paid"] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Test 3",
+                    nodes: [
+                        {
+                            title: "Business Manager 2", text: ["BM", "Does Stuff"], childNodes:
+                            [
+                              { title: "Subordinate 3", text: ["Subordinate", "Paid"] },
+                              { title: "Subordinate 4", text: ["Subordinate", "Paid"] }
+                            ]
+                        }
+                    ],
+                    childGroups: [
+                        {
+                            name: "Test 2",
+                            nodes: [
+                                {
+                                    title: "Business Manager", text: ["BM", "Does Stuff"], childNodes:
+                                    [
+                                      { title: "Subordinate 1", text: ["Subordinate", "Paid"] },
+                                      { title: "Subordinate 2", text: ["Subordinate", "Paid"] }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
             ]
-        }
+            }
+        ]
     }
 
 

@@ -15,7 +15,8 @@
         nodeStyle : "fill:rgba(50,50,125,0.8);stroke:rgba(0,0,50,1);stroke-width:1;",
         groupFont : "Arial",
         groupTextColour : "rgba(0,0,0,1)",
-        groupPadding : 20, //Default to 20px
+        groupPadding: 20, //Default to 20px
+        groupMargin: 30, //Default to 20px
         groupStyle : "fill:rgba(50,50,125,0.8);stroke:rgba(0,0,50,1);stroke-width:2;",
         chartPadding : 30
     }
@@ -34,18 +35,109 @@
 	    if (settings.nodeTextColour != undefined) { this.settings.nodeTextColour = settings.nodeTextColour };
 	    if (settings.groupTextColour != undefined) { this.settings.groupTextColour = settings.groupTextColour };
 	    if (settings.groupPadding != undefined) { this.settings.groupPadding = settings.groupPadding };
+	    if (settings.groupMargin != undefined) { this.settings.groupMargin = settings.groupMargin };
 	    if (settings.chartPadding != undefined) { this.settings.chartPadding = settings.chartPadding };
 	}
 
-	if (chartData != undefined)
+	if (chartData != undefined && svgElement != undefined)
 	{
-		if (chartData.group != undefined)
-		{
-		    var dimensions = this.calculateGroupSize(chartData.group, this.settings);
-
-		    this.drawGroup(this.settings.chartPadding + dimensions.width / 2, this.settings.chartPadding, svgElement, chartData.group, this.settings)
-		}
+	    this.drawChart(svgElement, chartData);
 	}
+}
+
+JOrganisationChart.prototype.drawChart = function(svgElement, chartData){
+    if (chartData != undefined) {
+
+        if (chartData.groups != undefined) {
+            var dimensions = this.calculateGroupMaxSize(chartData.groups, this.settings);
+
+            this.drawGroupRow(this.settings.chartPadding + dimensions.width / 2, this.settings.chartPadding, svgElement, chartData.groups, this.settings)
+        }
+    }
+}
+
+JOrganisationChart.prototype.calculateTotalGroupHeight = function (groups, settings) {
+    var maxGroupHeight = 0;
+
+    if ((groups != undefined) && (groups.length > 0)) {
+
+        for (var i = 0; i < groups.length; i++) {
+            var thisGroupHeight = this.calculateGroupSize(groups[i], settings).height + (settings.groupMargin * 2);
+
+            if (groups[i].childGroups != undefined && groups[i].childGroups.length > 0) {
+                thisGroupHeight = thisGroupHeight + this.calculateTotalGroupHeight(groups[i].childGroups, settings);
+            }
+
+            if (thisGroupHeight > maxGroupHeight) {
+                maxGroupHeight = thisGroupHeight;
+            }
+        }
+    }
+
+    return maxGroupHeight;
+}
+
+JOrganisationChart.prototype.calculateTotalGroupWidth = function (parentGroupWidth, groups, settings) {
+    var totalGroupWidth = 0;
+
+    if ((groups != undefined) && (groups.length > 0)) {
+
+        for (var i = 0; i < groups.length; i++) {
+
+            var childGroupWidth = 0;
+            var thisGroupWidth = this.calculateGroupSize(groups[i], settings).width;
+
+            if (groups[i].childGroups != undefined && groups[i].childGroups.length > 0) {
+                childGroupWidth = this.calculateTotalGroupWidth(thisGroupWidth, groups[i].childGroups, settings);
+
+                if (childGroupWidth > thisGroupWidth) {
+                    totalGroupWidth = totalGroupWidth + childGroupWidth + (settings.groupMargin * 2);
+                } else {
+                    totalGroupWidth = totalGroupWidth + thisGroupWidth + (settings.groupMargin * 2);
+                }
+
+            } else {
+                totalGroupWidth = totalGroupWidth + thisGroupWidth + (settings.groupMargin * 2);
+            }
+        }
+
+        if (totalGroupWidth < parentGroupWidth) {
+            totalGroupWidth = parentGroupWidth;
+        }
+    }
+
+    return totalGroupWidth;
+}
+
+JOrganisationChart.prototype.calculateGroupMaxSize = function (groups, settings) {
+
+    var dimensions = { width: 0, height: 0 };
+
+    if ((groups != undefined) && (groups.length > 0)) {
+        var totalWidth = 0;
+        var totalHeight = 0;
+
+        for (var i = 0; i < groups.length; i++) {
+
+            var groupSize = this.calculateGroupSize(groups[i], settings);
+            var groupWidth = groupSize.width + (settings.groupMargin * 2);
+            var childWidth = 0;
+
+            if (groups[i].childGroups != undefined && groups[i].childGroups.length > 0) {
+                childWidth = childWidth + this.calculateTotalGroupWidth(this.calculateGroupSize(groups[i], settings).width, groups[i].childGroups, settings);
+            }
+
+            if (childWidth > groupWidth) {
+                totalWidth = totalWidth + childWidth;
+            } else {
+                totalWidth = totalWidth + groupWidth;
+            }
+        }
+
+        dimensions.height = this.calculateTotalGroupHeight(groups, settings);
+        dimensions.width = totalWidth;
+    }
+    return dimensions;
 }
 
 JOrganisationChart.prototype.calculateGroupSize = function (group, settings) {
@@ -226,6 +318,47 @@ JOrganisationChart.prototype.calculateTextWidth = function(text,fontSize)
     return text.length * (fontSize / 2);
 }
 
+JOrganisationChart.prototype.drawGroupRow = function (cx, cy, svgElement, groups, settings) {
+
+    if (groups != undefined && groups.length > 0) {
+        var groupRowMaxDimensions = this.calculateGroupMaxSize(groups, settings);
+        var groupRowDimensions = this.calculateGroupSize(groups, settings);
+
+        var ncx = cx - (groupRowMaxDimensions.width / 2);
+        var ncy = cy + settings.groupMargin;
+
+        for (var i = 0; i < groups.length; i++) {
+
+            var groupDimensions = this.calculateGroupSize(groups[i], settings);
+            var childRowDimensions = { width: 0, height: 0 };
+
+            if (groups[i].childGroups != undefined && groups[i].childGroups.length > 0) {
+                childRowDimensions = this.calculateNodeRowMaxSize(groups[i].childGroups, settings);
+            }
+
+            if (childRowDimensions.width > groupDimensions.width) {
+                ncx = ncx + (childRowDimensions.width / 2) + settings.groupMargin;
+            } else {
+                ncx = ncx + (groupDimensions.width / 2) + settings.groupMargin;
+            }
+
+            //Draw Row
+            this.drawGroup(ncx, ncy, svgElement, groups[i], settings);
+
+            //Draw childern (if any)
+            if (groups[i].childGroups != undefined && groups[i].childGroups.length > 0) {
+                this.drawGroupRow(ncx, ncy + groupDimensions.height, svgElement, groups[i].childGroups, settings);
+            }
+
+            if (childRowDimensions.width > groupDimensions.width) {
+                ncx = ncx + (childRowDimensions.width / 2);
+            } else {
+                ncx = ncx + (groupDimensions.width / 2);
+            }
+        }
+    }
+}
+
 JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group, settings) {
     if (group != undefined) {
         var grpDimensions = this.calculateGroupSize(group, settings)
@@ -304,7 +437,13 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
 		nodeBoxSVG.setAttribute('y', cy);
 		nodeBoxSVG.setAttribute('width', dimensions.width);
 		nodeBoxSVG.setAttribute('height', dimensions.height);
-		nodeBoxSVG.setAttribute("style", settings.nodeStyle);
+		if (nodeData.nodeStyle != undefined)
+		{
+		    nodeBoxSVG.setAttribute("style", nodeData.nodeStyle);
+		} else
+		{
+		    nodeBoxSVG.setAttribute("style", settings.nodeStyle);
+		}
 
 		svgElement.append(nodeBoxSVG);
 
