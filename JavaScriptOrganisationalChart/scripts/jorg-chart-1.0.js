@@ -5,11 +5,11 @@
     //Defaults
     this.settings = {
         chartAlign : "centre",
-        nodeTitleSize : 30, //Default to 30px
+        nodeTitleSize : 16, //Default to 16px
         nodeLineSpacing : 0,
-        nodeTextSize : 20, //Default to 20px
+        nodeTextSize : 12, //Default to 12px
         nodePadding : 10, //Default to 10px
-        nodeMargin : 10, //Default to 10px
+        nodeMargin : 5, //Default to 5px
         nodeFont : "Arial",
         nodeTextColour : "rgba(0,0,0,1)",
         nodeStyle : "fill:rgba(255,255,255,0.8);stroke:rgba(50,50,50,1);stroke-width:1;",
@@ -18,7 +18,7 @@
         groupPadding: 10, //Default to 20px
         groupMargin: 0,//Default to 20px
         groupStyle : "fill:rgba(200,200,255,0.8);stroke:rgba(0,0,50,1);stroke-width:2;",
-        chartPadding: 25,
+        chartPadding: 10,
         chartBackgroundColour: "fill:rgba(220,220,220,1);stroke:rgba(220,220,220,1);stroke-width:0;"
     }
 
