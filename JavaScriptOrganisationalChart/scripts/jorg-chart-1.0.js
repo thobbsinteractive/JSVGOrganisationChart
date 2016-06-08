@@ -12,13 +12,14 @@
         nodeMargin : 10, //Default to 10px
         nodeFont : "Arial",
         nodeTextColour : "rgba(0,0,0,1)",
-        nodeStyle : "fill:rgba(50,50,125,0.8);stroke:rgba(0,0,50,1);stroke-width:1;",
+        nodeStyle : "fill:rgba(255,255,255,0.8);stroke:rgba(50,50,50,1);stroke-width:1;",
         groupFont : "Arial",
         groupTextColour : "rgba(0,0,0,1)",
-        groupPadding: 20, //Default to 20px
-        groupMargin: 30, //Default to 20px
-        groupStyle : "fill:rgba(50,50,125,0.8);stroke:rgba(0,0,50,1);stroke-width:2;",
-        chartPadding : 30
+        groupPadding: 10, //Default to 20px
+        groupMargin: 0,//Default to 20px
+        groupStyle : "fill:rgba(200,200,255,0.8);stroke:rgba(0,0,50,1);stroke-width:2;",
+        chartPadding: 25,
+        chartBackgroundColour: "fill:rgba(220,220,220,1);stroke:rgba(220,220,220,1);stroke-width:0;"
     }
 
 	if (settings != undefined) {
@@ -50,6 +51,17 @@ JOrganisationChart.prototype.drawChart = function(svgElement, chartData){
 
         if (chartData.groups != undefined) {
             var dimensions = this.calculateGroupMaxSize(chartData.groups, this.settings);
+
+            $(svgElement).width(dimensions.width + (this.settings.chartPadding * 2));
+            $(svgElement).height(dimensions.height + (this.settings.chartPadding * 2));
+            
+            var bkBoxSVG = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            bkBoxSVG.setAttribute('x',0);
+            bkBoxSVG.setAttribute('y',0);
+            bkBoxSVG.setAttribute('width', dimensions.width + (this.settings.chartPadding * 2));
+            bkBoxSVG.setAttribute('height', dimensions.height + (this.settings.chartPadding * 2));
+            bkBoxSVG.setAttribute("style", this.settings.chartBackgroundColour);
+            svgElement.append(bkBoxSVG);
 
             this.drawGroupRow(this.settings.chartPadding + dimensions.width / 2, this.settings.chartPadding, svgElement, chartData.groups, this.settings)
         }
@@ -134,8 +146,8 @@ JOrganisationChart.prototype.calculateGroupMaxSize = function (groups, settings)
             }
         }
 
-        dimensions.height = this.calculateTotalGroupHeight(groups, settings);
-        dimensions.width = totalWidth;
+        dimensions.height = this.calculateTotalGroupHeight(groups, settings) + (settings.groupMargin * 2);
+        dimensions.width = totalWidth + (settings.groupMargin * 2);
     }
     return dimensions;
 }
@@ -337,7 +349,7 @@ JOrganisationChart.prototype.drawGroupRow = function (cx, cy, svgElement, groups
             }
 
             if (childRowDimensions.width > groupDimensions.width) {
-                ncx = ncx + (childRowDimensions.width / 2) + settings.groupMargin;
+                ncx = ncx + (childRowDimensions.width / 2);
             } else {
                 ncx = ncx + (groupDimensions.width / 2) + settings.groupMargin;
             }
@@ -353,7 +365,7 @@ JOrganisationChart.prototype.drawGroupRow = function (cx, cy, svgElement, groups
             if (childRowDimensions.width > groupDimensions.width) {
                 ncx = ncx + (childRowDimensions.width / 2);
             } else {
-                ncx = ncx + (groupDimensions.width / 2);
+                ncx = ncx + (groupDimensions.width / 2) + settings.groupMargin;
             }
         }
     }
@@ -403,7 +415,7 @@ JOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, nodes, 
             }
 
             if (childRowDimensions.width > nodeDimensions.width) {
-                ncx = ncx + (childRowDimensions.width / 2) + settings.nodeMargin;
+                ncx = ncx + (childRowDimensions.width / 2);
             } else {
                 ncx = ncx + (nodeDimensions.width / 2) + settings.nodeMargin;
             }
@@ -413,7 +425,7 @@ JOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, nodes, 
 
             //Draw childern (if any)
             if (nodes[i].childNodes != undefined && nodes[i].childNodes.length > 0) {
-                this.drawNodeRow(ncx, ncy + nodeRowDimensions.height, svgElement, nodes[i].childNodes, settings);
+                this.drawNodeRow(ncx, cy + nodeRowDimensions.height, svgElement, nodes[i].childNodes, settings);
             }
 
             if (childRowDimensions.width > nodeDimensions.width) {

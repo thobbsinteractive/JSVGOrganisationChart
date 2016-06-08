@@ -3,6 +3,12 @@
     var charData = {
         groups: [
             {
+                name: "Test Group",
+                nodes: [
+                    { title: "Mrs D", text: ["Director", "Paid loads"] }
+                ]
+            },
+            {
             name: "Test1",
             nodes: [
                 {
