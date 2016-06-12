@@ -16,10 +16,12 @@
         groupFont : "Arial",
         groupTextColour : "rgba(0,0,0,1)",
         groupPadding: 10, //Default to 20px
-        groupMargin: 0,//Default to 20px
+        groupMargin: 10,//Default to 20px
         groupStyle : "fill:rgba(200,200,255,0.8);stroke:rgba(0,0,50,1);stroke-width:2;",
         chartPadding: 10,
-        chartBackgroundColour: "fill:rgba(220,220,220,1);stroke:rgba(220,220,220,1);stroke-width:0;"
+        chartBackgroundColour: "fill:rgba(220,220,220,1);stroke:rgba(220,220,220,1);stroke-width:0;",
+        groupLineStyle: "stroke:rgb(0,0,0);stroke-width:2",
+        nodeLineStyle: "stroke:rgb(100,100,100);stroke-width:1"
     }
 
 	if (settings != undefined) {
@@ -63,7 +65,7 @@ JOrganisationChart.prototype.drawChart = function(svgElement, chartData){
             bkBoxSVG.setAttribute("style", this.settings.chartBackgroundColour);
             svgElement.append(bkBoxSVG);
 
-            this.drawGroupRow(this.settings.chartPadding + dimensions.width / 2, this.settings.chartPadding, svgElement, chartData.groups, this.settings)
+            this.drawGroupRow(this.settings.chartPadding + dimensions.width / 2, this.settings.chartPadding, svgElement, chartData.groups, this.settings, true)
         }
     }
 }
@@ -330,7 +332,7 @@ JOrganisationChart.prototype.calculateTextWidth = function(text,fontSize)
     return text.length * (fontSize / 2);
 }
 
-JOrganisationChart.prototype.drawGroupRow = function (cx, cy, svgElement, groups, settings) {
+JOrganisationChart.prototype.drawGroupRow = function (cx, cy, svgElement, groups, settings, isFirstNode) {
 
     if (groups != undefined && groups.length > 0) {
         var groupRowMaxDimensions = this.calculateGroupMaxSize(groups, settings);
@@ -356,6 +358,9 @@ JOrganisationChart.prototype.drawGroupRow = function (cx, cy, svgElement, groups
 
             //Draw Row
             this.drawGroup(ncx, ncy, svgElement, groups[i], settings);
+            if (!isFirstNode) {
+                this.drawConnection(cx, cy - settings.groupMargin, ncx, ncy, settings.groupMargin, settings.groupLineStyle, svgElement, settings)
+            };
 
             //Draw childern (if any)
             if (groups[i].childGroups != undefined && groups[i].childGroups.length > 0) {
@@ -390,12 +395,12 @@ JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group, se
         if (group.nodes != undefined && group.nodes.length > 0) {
 
             //Draw Row
-            this.drawNodeRow(cx, gcy, svgElement, group.nodes, settings)
+            this.drawNodeRow(cx, gcy, svgElement, group.nodes, settings, true)
         }
     }
 }
 
-JOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, nodes, settings) {
+JOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, nodes, settings, isFirstNode) {
 
     if (nodes != undefined && nodes.length > 0)
     {
@@ -422,7 +427,11 @@ JOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, nodes, 
 
             //Draw Row
             this.drawNode(ncx, ncy, svgElement, nodes[i], settings);
-
+            if (!isFirstNode)
+            {
+                this.drawConnection(cx, cy - settings.nodeMargin, ncx, ncy, settings.nodeMargin, settings.nodeLineStyle, svgElement, settings)
+            };
+        
             //Draw childern (if any)
             if (nodes[i].childNodes != undefined && nodes[i].childNodes.length > 0) {
                 this.drawNodeRow(ncx, cy + nodeRowDimensions.height, svgElement, nodes[i].childNodes, settings);
@@ -434,6 +443,36 @@ JOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, nodes, 
                 ncx = ncx + (nodeDimensions.width / 2) + settings.nodeMargin;
             }
         }
+    }
+}
+
+JOrganisationChart.prototype.drawConnection = function (cx1, cy1, cx2, cy2, margin, lineStyle, svgElement, settings)
+{
+    if(svgElement != undefined)
+    {
+        var lineSVG = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        lineSVG.setAttribute('style', lineStyle);
+        lineSVG.setAttribute('x1', cx1);
+        lineSVG.setAttribute('y1', cy1);
+        lineSVG.setAttribute('x2', cx1);
+        lineSVG.setAttribute('y2', cy1 + margin);
+        svgElement.append(lineSVG);
+
+        lineSVG = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        lineSVG.setAttribute('style', lineStyle);
+        lineSVG.setAttribute('x1', cx1);
+        lineSVG.setAttribute('y1', cy1 + margin);
+        lineSVG.setAttribute('x2', cx2);
+        lineSVG.setAttribute('y2', cy1 + margin);
+        svgElement.append(lineSVG);
+
+        lineSVG = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        lineSVG.setAttribute('style', lineStyle);
+        lineSVG.setAttribute('x1', cx2);
+        lineSVG.setAttribute('y1', cy1 + margin);
+        lineSVG.setAttribute('x2', cx2);
+        lineSVG.setAttribute('y2', cy2);
+        svgElement.append(lineSVG);
     }
 }
 
