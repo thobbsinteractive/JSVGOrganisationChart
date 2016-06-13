@@ -12,16 +12,16 @@
         nodeMargin : 5, //Default to 5px
         nodeFont : "Arial",
         nodeTextColour : "rgba(0,0,0,1)",
-        nodeStyle : "fill:rgba(255,255,255,0.8);stroke:rgba(50,50,50,1);stroke-width:1;",
+        nodeStyle : "fill:rgba(255,255,255,1);stroke:rgba(181,217,234,1);stroke-width:1;",
         groupFont : "Arial",
         groupTextColour : "rgba(0,0,0,1)",
         groupPadding: 10, //Default to 20px
         groupMargin: 10,//Default to 20px
-        groupStyle : "fill:rgba(200,200,255,0.8);stroke:rgba(0,0,50,1);stroke-width:2;",
+        groupStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;",
         chartPadding: 10,
-        chartBackgroundColour: "fill:rgba(220,220,220,1);stroke:rgba(220,220,220,1);stroke-width:0;",
-        groupLineStyle: "stroke:rgb(0,0,0);stroke-width:2",
-        nodeLineStyle: "stroke:rgb(100,100,100);stroke-width:1"
+        chartBackgroundColour: "fill:rgba(255,255,255,1);stroke:rgba(220,220,220,1);stroke-width:0;",
+        groupLineStyle: "stroke:rgba(52,136,221,1);stroke-width:2",
+        nodeLineStyle: "stroke:rgba(52,136,221,1);stroke-width:1"
     }
 
 	if (settings != undefined) {
