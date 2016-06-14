@@ -65,13 +65,13 @@
                     ],
                     childGroups: [
                         {
-                            name: "Test 2",
+                            name: "Test 9",
                             nodes: [
                                 {
                                     title: "Business Manager", text: ["BM", "Does Stuff"], childNodes:
                                     [
-                                      { title: "Subordinate 1", text: ["Subordinate", "Paid"] },
-                                      { title: "Subordinate 2", text: ["Subordinate", "Paid"] }
+                                      { title: "Subordinate 7", text: ["Subordinate", "Paid"] },
+                                      { title: "Subordinate 8", text: ["Subordinate", "Paid"] }
                                     ]
                                 }
                             ]

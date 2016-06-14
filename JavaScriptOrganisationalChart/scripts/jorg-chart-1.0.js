@@ -6,17 +6,17 @@
     this.settings = {
         chartAlign : "centre",
         nodeTitleSize : 16, //Default to 16px
-        nodeLineSpacing : 0,
+        nodeLineSpacing : 5,
         nodeTextSize : 12, //Default to 12px
         nodePadding : 10, //Default to 10px
-        nodeMargin : 5, //Default to 5px
+        nodeMargin : 10, //Default to 5px
         nodeFont : "Arial",
         nodeTextColour : "rgba(0,0,0,1)",
         nodeStyle : "fill:rgba(255,255,255,1);stroke:rgba(181,217,234,1);stroke-width:1;",
         groupFont : "Arial",
         groupTextColour : "rgba(0,0,0,1)",
-        groupPadding: 10, //Default to 20px
-        groupMargin: 10,//Default to 20px
+        groupPadding: 20, //Default to 20px
+        groupMargin: 20,//Default to 20px
         groupStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;",
         chartPadding: 10,
         chartBackgroundColour: "fill:rgba(255,255,255,1);stroke:rgba(220,220,220,1);stroke-width:0;",
@@ -52,7 +52,7 @@ JOrganisationChart.prototype.drawChart = function(svgElement, chartData){
     if (chartData != undefined) {
 
         if (chartData.groups != undefined) {
-            var dimensions = this.calculateGroupMaxSize(chartData.groups, this.settings);
+            var dimensions = this.calculateGroupRowSize(chartData.groups, this.settings, true);
 
             $(svgElement).width(dimensions.width + (this.settings.chartPadding * 2));
             $(svgElement).height(dimensions.height + (this.settings.chartPadding * 2));
@@ -76,7 +76,7 @@ JOrganisationChart.prototype.calculateTotalGroupHeight = function (groups, setti
     if ((groups != undefined) && (groups.length > 0)) {
 
         for (var i = 0; i < groups.length; i++) {
-            var thisGroupHeight = this.calculateGroupSize(groups[i], settings).height + (settings.groupMargin * 2);
+            var thisGroupHeight = this.calculateGroupSize(groups[i], settings, true).height;
 
             if (groups[i].childGroups != undefined && groups[i].childGroups.length > 0) {
                 thisGroupHeight = thisGroupHeight + this.calculateTotalGroupHeight(groups[i].childGroups, settings);
@@ -99,19 +99,19 @@ JOrganisationChart.prototype.calculateTotalGroupWidth = function (parentGroupWid
         for (var i = 0; i < groups.length; i++) {
 
             var childGroupWidth = 0;
-            var thisGroupWidth = this.calculateGroupSize(groups[i], settings).width;
+            var thisGroupWidth = this.calculateGroupSize(groups[i], settings, true).width;
 
             if (groups[i].childGroups != undefined && groups[i].childGroups.length > 0) {
                 childGroupWidth = this.calculateTotalGroupWidth(thisGroupWidth, groups[i].childGroups, settings);
 
                 if (childGroupWidth > thisGroupWidth) {
-                    totalGroupWidth = totalGroupWidth + childGroupWidth + (settings.groupMargin * 2);
+                    totalGroupWidth = totalGroupWidth + childGroupWidth;
                 } else {
-                    totalGroupWidth = totalGroupWidth + thisGroupWidth + (settings.groupMargin * 2);
+                    totalGroupWidth = totalGroupWidth + thisGroupWidth;
                 }
 
             } else {
-                totalGroupWidth = totalGroupWidth + thisGroupWidth + (settings.groupMargin * 2);
+                totalGroupWidth = totalGroupWidth + thisGroupWidth;
             }
         }
 
@@ -123,22 +123,29 @@ JOrganisationChart.prototype.calculateTotalGroupWidth = function (parentGroupWid
     return totalGroupWidth;
 }
 
-JOrganisationChart.prototype.calculateGroupMaxSize = function (groups, settings) {
+JOrganisationChart.prototype.calculateGroupRowSize = function (groups, settings, includeChildren) {
 
     var dimensions = { width: 0, height: 0 };
 
-    if ((groups != undefined) && (groups.length > 0)) {
+    if (groups != undefined && groups.length > 0) {
         var totalWidth = 0;
-        var totalHeight = 0;
+        var rowHeight = 0;
 
         for (var i = 0; i < groups.length; i++) {
 
-            var groupSize = this.calculateGroupSize(groups[i], settings);
-            var groupWidth = groupSize.width + (settings.groupMargin * 2);
+            var groupSize = this.calculateGroupSize(groups[i], settings, true);
+
+            if (groupSize.height > rowHeight)
+            {
+                rowHeight = groupSize.height;
+            }
+            var groupWidth = groupSize.width;
             var childWidth = 0;
 
-            if (groups[i].childGroups != undefined && groups[i].childGroups.length > 0) {
-                childWidth = childWidth + this.calculateTotalGroupWidth(this.calculateGroupSize(groups[i], settings).width, groups[i].childGroups, settings);
+            if (includeChildren != undefined && includeChildren == true) {
+                if (groups[i].childGroups != undefined && groups[i].childGroups.length > 0) {
+                    childWidth = childWidth + this.calculateTotalGroupWidth(this.calculateGroupSize(groups[i], settings, true).width, groups[i].childGroups, settings);
+                }
             }
 
             if (childWidth > groupWidth) {
@@ -148,13 +155,19 @@ JOrganisationChart.prototype.calculateGroupMaxSize = function (groups, settings)
             }
         }
 
-        dimensions.height = this.calculateTotalGroupHeight(groups, settings) + (settings.groupMargin * 2);
-        dimensions.width = totalWidth + (settings.groupMargin * 2);
+        if (includeChildren != undefined && includeChildren == true)
+        {
+            dimensions.height = this.calculateTotalGroupHeight(groups, settings);
+        } else
+        {
+            dimensions.height = rowHeight;
+        }
+        dimensions.width = totalWidth;
     }
     return dimensions;
 }
 
-JOrganisationChart.prototype.calculateGroupSize = function (group, settings) {
+JOrganisationChart.prototype.calculateGroupSize = function (group, settings, includeMargins) {
     var dimensions = { width: 0, height: 0 };
 
     if (group != undefined) {
@@ -165,33 +178,17 @@ JOrganisationChart.prototype.calculateGroupSize = function (group, settings) {
         if (group.nodes != undefined && group.nodes.length > 0) {
 
             //Size of this row           
-            var rowDimensions = this.calculateNodeRowMaxSize(group.nodes, settings)
+            var rowDimensions = this.calculateNodeRowSize(group.nodes, settings, true);
 
             dimensions.width = dimensions.width + rowDimensions.width;
             dimensions.height = dimensions.height + rowDimensions.height;
         }
-    }
 
-    return dimensions;
-}
-
-JOrganisationChart.prototype.calculateNodeRowSize = function (nodes, settings) {
-
-    var dimensions = { width: 0, height: 0 };
-
-    if (nodes != undefined && nodes.length > 0) {
-       
-        for (var i = 0; i < nodes.length; i++) {
-
-            var nodeDimensions = this.calculateNodeSize(nodes[i], settings);
-            dimensions.width = dimensions.width + nodeDimensions.width + (settings.nodeMargin * 2);
-
-            if (nodeDimensions.height > dimensions.height)
-            {
-                dimensions.height = nodeDimensions.height;
-            }
+        if(includeMargins != undefined && includeMargins == true)
+        {
+            dimensions.width = dimensions.width + (settings.groupMargin * 2);
+            dimensions.height = dimensions.height + (settings.groupMargin * 2);
         }
-        dimensions.height = dimensions.height + (settings.nodeMargin * 2);
     }
 
     return dimensions;
@@ -203,7 +200,7 @@ JOrganisationChart.prototype.calculateTotalChildRowHeight = function (nodes, set
     if ((nodes != undefined) && (nodes.length > 0)) {
 
         for (var i = 0; i < nodes.length; i++) {
-            var thisNodeHeight = this.calculateNodeSize(nodes[i], settings).height + (settings.nodeMargin * 2);
+            var thisNodeHeight = this.calculateNodeSize(nodes[i], settings, true).height;
 
             if (nodes[i].childNodes != undefined && nodes[i].childNodes.length > 0) {
                 thisNodeHeight = thisNodeHeight + this.calculateTotalChildRowHeight(nodes[i].childNodes, settings);
@@ -226,21 +223,21 @@ JOrganisationChart.prototype.calculateTotalChildRowWidth = function (parentNodeW
 
         for (var i = 0; i < nodes.length; i++) {
             var childRowWidth = 0;
-            var thisNodeWidth = this.calculateNodeSize(nodes[i], settings).width;
+            var thisNodeWidth = this.calculateNodeSize(nodes[i], settings, true).width;
 
             if (nodes[i].childNodes != undefined && nodes[i].childNodes.length > 0) {
                 childRowWidth = this.calculateTotalChildRowWidth(thisNodeWidth, nodes[i].childNodes, settings);
 
                 if (childRowWidth > thisNodeWidth) {
-                    totalNodeWidth = totalNodeWidth + childRowWidth + (settings.nodeMargin * 2);
+                    totalNodeWidth = totalNodeWidth + childRowWidth;
                 }else
                 {
-                    totalNodeWidth = totalNodeWidth + thisNodeWidth + (settings.nodeMargin * 2);
+                    totalNodeWidth = totalNodeWidth + thisNodeWidth;
                 }
 
             }else
             {
-                totalNodeWidth = totalNodeWidth + thisNodeWidth + (settings.nodeMargin * 2);
+                totalNodeWidth = totalNodeWidth + thisNodeWidth;
             }
         }
 
@@ -252,23 +249,31 @@ JOrganisationChart.prototype.calculateTotalChildRowWidth = function (parentNodeW
     return totalNodeWidth;
 }
 
-JOrganisationChart.prototype.calculateNodeRowMaxSize = function (nodes, settings) {
+JOrganisationChart.prototype.calculateNodeRowSize = function (nodes, settings, includeChildren) {
 
     var dimensions = { width: 0, height: 0 };
 
     if((nodes != undefined)&&(nodes.length > 0))
     {   
         var totalWidth = 0;
-        var totalHeight = 0;
+        var rowHeight = 0;
 
         for (var i = 0; i < nodes.length; i++) {
 
-            var nodeSize = this.calculateNodeSize(nodes[i], settings);
-            var nodeWidth = nodeSize.width + (settings.nodeMargin * 2);
+            var nodeSize = this.calculateNodeSize(nodes[i], settings, true);
+
+            if (nodeSize.height > rowHeight)
+            {
+                rowHeight = nodeSize.height;
+            }
+
+            var nodeWidth = nodeSize.width;
             var childWidth = 0;
 
-            if (nodes[i].childNodes != undefined && nodes[i].childNodes.length > 0) {
-                childWidth = childWidth + this.calculateTotalChildRowWidth(this.calculateNodeSize(nodes[i], settings).width, nodes[i].childNodes, settings);
+            if (includeChildren != undefined && includeChildren == true) {
+                if (nodes[i].childNodes != undefined && nodes[i].childNodes.length > 0) {
+                    childWidth = childWidth + this.calculateTotalChildRowWidth(this.calculateNodeSize(nodes[i], settings, true).width, nodes[i].childNodes, settings);
+                }
             }
 
             if(childWidth > nodeWidth)
@@ -280,13 +285,19 @@ JOrganisationChart.prototype.calculateNodeRowMaxSize = function (nodes, settings
             }
         }
 
-        dimensions.height = this.calculateTotalChildRowHeight(nodes,settings);
+        if (includeChildren != undefined && includeChildren == true)
+        {
+            dimensions.height = this.calculateTotalChildRowHeight(nodes, settings);
+        } else
+        {
+            dimensions.height = rowHeight;
+        }
         dimensions.width = totalWidth;
     }
     return dimensions;
 }
 
-JOrganisationChart.prototype.calculateNodeSize = function (nodeData, settings) {
+JOrganisationChart.prototype.calculateNodeSize = function (nodeData, settings, includeMargins) {
 	var dimensions = { width: 0, height: 0 };
 
 	if (nodeData != undefined)
@@ -322,6 +333,11 @@ JOrganisationChart.prototype.calculateNodeSize = function (nodeData, settings) {
 		carrageLoc = carrageLoc + settings.nodePadding;
 		dimensions.width = dimensions.width + (settings.nodePadding * 2);
 		dimensions.height = carrageLoc;
+
+		if (includeMargins != undefined && includeMargins == true) {
+		    dimensions.width = dimensions.width + (settings.nodeMargin * 2);
+		    dimensions.height = dimensions.height + (settings.nodeMargin * 2);
+		}
 	}
 
 	return dimensions;
@@ -335,25 +351,25 @@ JOrganisationChart.prototype.calculateTextWidth = function(text,fontSize)
 JOrganisationChart.prototype.drawGroupRow = function (cx, cy, svgElement, groups, settings, isFirstNode) {
 
     if (groups != undefined && groups.length > 0) {
-        var groupRowMaxDimensions = this.calculateGroupMaxSize(groups, settings);
-        var groupRowDimensions = this.calculateGroupSize(groups, settings);
+        var groupRowMaxDimensions = this.calculateGroupRowSize(groups, settings, true);
+        var groupRowDimensions = this.calculateGroupRowSize(groups, settings)
 
         var ncx = cx - (groupRowMaxDimensions.width / 2);
         var ncy = cy + settings.groupMargin;
 
         for (var i = 0; i < groups.length; i++) {
 
-            var groupDimensions = this.calculateGroupSize(groups[i], settings);
+            var groupDimensions = this.calculateGroupSize(groups[i], settings, true);
             var childRowDimensions = { width: 0, height: 0 };
 
             if (groups[i].childGroups != undefined && groups[i].childGroups.length > 0) {
-                childRowDimensions = this.calculateNodeRowMaxSize(groups[i].childGroups, settings);
+                childRowDimensions = this.calculateGroupRowSize(groups[i].childGroups, settings, true);
             }
 
             if (childRowDimensions.width > groupDimensions.width) {
                 ncx = ncx + (childRowDimensions.width / 2);
             } else {
-                ncx = ncx + (groupDimensions.width / 2) + settings.groupMargin;
+                ncx = ncx + (groupDimensions.width / 2);
             }
 
             //Draw Row
@@ -364,13 +380,13 @@ JOrganisationChart.prototype.drawGroupRow = function (cx, cy, svgElement, groups
 
             //Draw childern (if any)
             if (groups[i].childGroups != undefined && groups[i].childGroups.length > 0) {
-                this.drawGroupRow(ncx, ncy + groupDimensions.height, svgElement, groups[i].childGroups, settings);
+                this.drawGroupRow(ncx, cy + groupRowDimensions.height, svgElement, groups[i].childGroups, settings);
             }
 
             if (childRowDimensions.width > groupDimensions.width) {
                 ncx = ncx + (childRowDimensions.width / 2);
             } else {
-                ncx = ncx + (groupDimensions.width / 2) + settings.groupMargin;
+                ncx = ncx + (groupDimensions.width / 2);
             }
         }
     }
@@ -404,7 +420,7 @@ JOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, nodes, 
 
     if (nodes != undefined && nodes.length > 0)
     {
-        var nodeRowMaxDimensions = this.calculateNodeRowMaxSize(nodes, settings);
+        var nodeRowMaxDimensions = this.calculateNodeRowSize(nodes, settings, true);
         var nodeRowDimensions = this.calculateNodeRowSize(nodes, settings);
 
         var ncx = cx - (nodeRowMaxDimensions.width / 2);
@@ -412,17 +428,17 @@ JOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, nodes, 
 
         for (var i = 0; i < nodes.length; i++) {
 
-            var nodeDimensions = this.calculateNodeSize(nodes[i], settings);
+            var nodeDimensions = this.calculateNodeSize(nodes[i], settings, true);
             var childRowDimensions = { width: 0, height: 0 };
 
             if (nodes[i].childNodes != undefined && nodes[i].childNodes.length > 0) {
-                childRowDimensions = this.calculateNodeRowMaxSize(nodes[i].childNodes, settings);
+                childRowDimensions = this.calculateNodeRowSize(nodes[i].childNodes, settings, true);
             }
 
             if (childRowDimensions.width > nodeDimensions.width) {
                 ncx = ncx + (childRowDimensions.width / 2);
             } else {
-                ncx = ncx + (nodeDimensions.width / 2) + settings.nodeMargin;
+                ncx = ncx + (nodeDimensions.width / 2);
             }
 
             //Draw Row
@@ -438,9 +454,9 @@ JOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, nodes, 
             }
 
             if (childRowDimensions.width > nodeDimensions.width) {
-                ncx = ncx + (childRowDimensions.width / 2) + settings.nodeMargin;
+                ncx = ncx + (childRowDimensions.width / 2);
             } else {
-                ncx = ncx + (nodeDimensions.width / 2) + settings.nodeMargin;
+                ncx = ncx + (nodeDimensions.width / 2);
             }
         }
     }
