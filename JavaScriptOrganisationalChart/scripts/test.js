@@ -28,7 +28,10 @@
                                         { title: "Johnson", text: ["And Johnson", "Paid some"] }
                                     ]
                             }
-                        ]
+                        ],
+                    onclick: "openTo(event,'http://www.bbc.co.uk')",
+                    onmouseover: "setStyle(event,'fill:rgba(240,240,240,1);stroke:rgba(181,217,234,1);stroke-width:2;')",
+                    onmouseout: "setStyle(event,'fill:rgba(255,255,255,1);stroke:rgba(181,217,234,1);stroke-width:1;')"
                 },
                 {
                     title: "Mrs Director", text: ["Owner", "Owns most of Russia"], childNodes:

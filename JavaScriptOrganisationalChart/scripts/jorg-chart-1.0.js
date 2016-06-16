@@ -44,6 +44,34 @@
 
 	if (chartData != undefined && svgElement != undefined)
 	{
+	    //Default built-in functions
+
+        var chartMethods = ''+
+        '<script type="text/JavaScript">' +
+            '<![CDATA[' +
+                'function navigateTo(event, url) {' +
+                    'if(event.target != undefined && url != undefined)' +
+                    '{' +
+                        'window.location.href = url;' +
+                    '}' +
+               '}' +
+               'function openTo(event, url) {' +
+                    'if(event.target != undefined && url != undefined)' +
+                    '{' +
+                        'window.open(url,"_blank");' +
+                    '}' +
+               '}' +
+               'function setStyle(event,newStyle) {' +
+                    'if(event.target != undefined && newStyle != undefined)' +
+                    '{' +
+                        'event.target.setAttribute("style",newStyle);' +
+                    '}' +
+               '}' +
+	        ']]>' +
+        '</script>'
+
+        svgElement.append(chartMethods);
+
 	    this.drawChart(svgElement, chartData);
 	}
 }
@@ -404,6 +432,15 @@ JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group, se
         groupBoxSVG.setAttribute('height', grpDimensions.height);
         groupBoxSVG.setAttribute("style", settings.groupStyle);
 
+        if (group.name != undefined) { groupBoxSVG.setAttribute("data-name", group.name); }
+        if (group.onclick != undefined){ groupBoxSVG.setAttribute('onclick', group.onclick); }
+        if (group.onactivate != undefined) { groupBoxSVG.setAttribute('onactivate', group.onactivate); }
+        if (group.onmousedown != undefined) { groupBoxSVG.setAttribute('onmousedown ', group.onmousedown); }
+        if (group.onmouseup != undefined) { groupBoxSVG.setAttribute('onmouseup', group.onmouseup); }
+        if (group.onmouseover != undefined) { groupBoxSVG.setAttribute('onmouseover', group.onmouseover); }
+        if (group.onmousemove != undefined) { groupBoxSVG.setAttribute('onmousemove', group.onmousemove); }
+        if (group.onmouseout != undefined) { groupBoxSVG.setAttribute('onmouseout', group.onmouseout); }
+
         svgElement.append(groupBoxSVG);
 
         var gcy = (cy + settings.groupPadding)
@@ -511,6 +548,15 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
 		{
 		    nodeBoxSVG.setAttribute("style", settings.nodeStyle);
 		}
+
+		if (nodeData.name != undefined) { nodeBoxSVG.setAttribute("data-name", nodeData.name); }
+		if (nodeData.onclick != undefined) { nodeBoxSVG.setAttribute('onclick', nodeData.onclick); }
+		if (nodeData.onactivate != undefined) { nodeBoxSVG.setAttribute('onactivate', nodeData.onactivate); }
+		if (nodeData.onmousedown != undefined) { nodeBoxSVG.setAttribute('onmousedown ', nodeData.onmousedown); }
+		if (nodeData.onmouseup != undefined) { nodeBoxSVG.setAttribute('onmouseup', nodeData.onmouseup); }
+		if (nodeData.onmouseover != undefined) { nodeBoxSVG.setAttribute('onmouseover', nodeData.onmouseover); }
+		if (nodeData.onmousemove != undefined) { nodeBoxSVG.setAttribute('onmousemove', nodeData.onmousemove); }
+		if (nodeData.onmouseout != undefined) { nodeBoxSVG.setAttribute('onmouseout', nodeData.onmouseout); }
 
 		svgElement.append(nodeBoxSVG);
 
