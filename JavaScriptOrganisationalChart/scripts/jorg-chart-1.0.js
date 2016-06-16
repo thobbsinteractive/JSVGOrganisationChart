@@ -1,5 +1,9 @@
 ﻿function JOrganisationChart(svgElement, chartData, settings)
 {
+    this.data = {
+        groups: []
+    }
+
     this.svgElement = svgElement;
 
     //Defaults
@@ -42,10 +46,9 @@
 	    if (settings.chartPadding != undefined) { this.settings.chartPadding = settings.chartPadding };
 	}
 
-	if (chartData != undefined && svgElement != undefined)
+	if (svgElement != undefined)
 	{
 	    //Default built-in functions
-
         var chartMethods = ''+
         '<script type="text/JavaScript">' +
             '<![CDATA[' +
@@ -72,8 +75,81 @@
 
         svgElement.append(chartMethods);
 
-	    this.drawChart(svgElement, chartData);
+        if (chartData != undefined) {
+            this.data = chartData;
+            this.drawChart(svgElement, chartData);
+        }
 	}
+}
+
+JOrganisationChart.prototype.addGroup = function(parentid, groupid, groupName, groupOnclick, groupOnmouseover, groupOnmouseout)
+{
+    var parentGroup = undefined;
+
+    if(parentid != undefined)
+    {
+        if(this.data.groups != undefined && this.data.groups.length > 0)
+        {
+            var parentGroup = this.findGroup(parentid, this.data.groups);
+        }
+    }
+
+    if(parentGroup != undefined)
+    {
+        if (parentGroup.childGroups == undefined)
+        {
+            parentGroup.childGroups = [];
+        }
+
+        parentGroup.childGroups.push({
+                id: groupid,
+                name: groupName,
+                nodes: [],
+                onclick: groupOnclick,
+                onmouseover: groupOnmouseover,
+                onmouseout: groupOnmouseout
+        });
+    }else
+    {
+        if(this.data.groups != undefined)
+        {
+            this.data.groups.push({
+                id: groupid,
+                name: groupName,
+                nodes: [],
+                onclick: groupOnclick,
+                onmouseover: groupOnmouseover,
+                onmouseout: groupOnmouseout
+            });
+        }
+    }
+
+    this.drawChart(this.svgElement, this.data);
+}
+
+JOrganisationChart.prototype.findGroup = function (id, childGroups)
+{
+    if (childGroups != undefined && childGroups.length > 0) {
+        for(var i = 0; i < childGroups.length; i++)
+        {
+            if(childGroups[i] != undefined && childGroups[i].id != undefined && childGroups[i].id == id)
+            {
+                return childGroups[i];
+            }
+        }
+
+        //Check for Id in children
+        for (var i = 0; i < childGroups.length; i++) {
+            if (childGroups[i] != undefined && childGroups[i].childGroups != undefined && childGroups[i].childGroups.length > 0) {
+                var foundGroup = this.findGroup(id, childGroups[i].childGroups);
+                if(foundGroup != undefined)
+                {
+                    return foundGroup;
+                }
+            }
+        }
+    }
+    return undefined;
 }
 
 JOrganisationChart.prototype.drawChart = function(svgElement, chartData){

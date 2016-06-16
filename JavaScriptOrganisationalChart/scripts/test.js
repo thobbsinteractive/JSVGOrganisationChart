@@ -23,7 +23,7 @@
                             { title: "The Partner", text: ["Middle Manager 2", "Paid a bit"] },
                             { title: "The Another", text: ["Middle Manager 3", "Paid a bit"] },
                             {
-                                title: "The Johnson", text: ["Middle Manager 4", "Paid a bit"], childNodes:
+                                title: "The Johnson", text: ["Middle Manager 4", "Paid a bit", "Worth the money"], childNodes:
                                     [
                                         { title: "Johnson", text: ["And Johnson", "Paid some"] }
                                     ]
@@ -44,6 +44,7 @@
             ],
             childGroups:[
                 {
+                    id: "1",
                     name: "Test 2",
                     nodes: [
                         {
@@ -88,5 +89,9 @@
 
 
     var chart = new JOrganisationChart($("#mySVG"), charData);
+
+    chart.addGroup(undefined, "1000", "Top Group");
+    chart.addGroup("1", "101", "Add Group");
+    chart.addGroup("1", "102", "Add Next Group");
 
 });
