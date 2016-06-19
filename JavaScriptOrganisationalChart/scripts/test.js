@@ -1,4 +1,4 @@
-﻿$(document).ready(function(){
+﻿document.addEventListener("DOMContentLoaded", function(event){
 
     var charData = {
         groups: [
@@ -116,5 +116,4 @@
 
     chart.addNode("102", undefined, "301", "Added Node", ["Added Sub"]);
     chart.addNode("4", "16", "303", "Added Node", ["Added Sub"]);
-
 });

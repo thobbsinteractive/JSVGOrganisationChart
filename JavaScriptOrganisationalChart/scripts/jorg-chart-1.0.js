@@ -50,7 +50,6 @@
 	{
 	    //Default built-in functions
         var chartMethods = ''+
-            '<![CDATA[' +
                 'function navigateTo(event, url) {' +
                     'if(event.target != undefined && url != undefined)' +
                     '{' +
@@ -68,11 +67,11 @@
                     '{' +
                         'event.target.setAttribute("style",newStyle);' +
                     '}' +
-               '}' +
-	        ']]>'
+               '}'
 
 
-        var scriptElement = document.createElementNS("http://www.w3.org/2000/svg", "script");
+        var scriptElement = document.createElement("script");
+        scriptElement.setAttribute("type","application/ecmascript")
         scriptElement.innerHTML = chartMethods;
         svgElement.appendChild(scriptElement);
 
@@ -220,8 +219,8 @@ JOrganisationChart.prototype.drawChart = function(svgElement, chartData){
         if (chartData.groups != undefined) {
             var dimensions = this.calculateRowSize(chartData.groups, this.settings, true);
 
-            svgElement.width = (dimensions.width + (this.settings.chartPadding * 2));
-            svgElement.height = (dimensions.height + (this.settings.chartPadding * 2));
+            svgElement.setAttribute("width",(dimensions.width + (this.settings.chartPadding * 2)));
+            svgElement.setAttribute("height",(dimensions.height + (this.settings.chartPadding * 2)));
             
             var bkBoxSVG = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             bkBoxSVG.setAttribute('x',0);
