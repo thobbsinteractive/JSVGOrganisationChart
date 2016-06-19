@@ -103,7 +103,18 @@
     chart.addGroup(undefined, "1000", "Top Group");
     chart.addGroup("1000", "101", "Bot1 Group");
     chart.addGroup("1000", "102", "Bot2 Group");
-    chart.addGroup("1", "101", "Add Group");
+    chart.addGroup("1", "101", "Add Group", [
+                            {
+                                id: "304", type: "Node", title: "Business Manager 2", text: ["BM", "Does Stuff"], children:
+                                [
+                                  { id: "401", type: "Node", title: "Subordinate 3", text: ["Subordinate", "Paid"] },
+                                  { id: "402", type: "Node", title: "Subordinate 4", text: ["Subordinate", "Paid"] }
+                                ]
+                            }
+    ]);
     chart.addGroup("1", "102", "Add Next Group");
+
+    chart.addNode("102", undefined, "301", "Added Node", ["Added Sub"]);
+    chart.addNode("4", "16", "303", "Added Node", ["Added Sub"]);
 
 });
