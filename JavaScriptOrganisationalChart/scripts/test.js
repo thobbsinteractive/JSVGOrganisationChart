@@ -98,7 +98,7 @@
     }
 
 
-    var chart = new JOrganisationChart($("#mySVG"), charData);
+    var chart = new JOrganisationChart(document.getElementById("mySVG"), charData);
 
     chart.addGroup(undefined, "1000", "Top Group");
     chart.addGroup("1000", "101", "Bot1 Group");

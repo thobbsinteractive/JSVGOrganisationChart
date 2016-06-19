@@ -67,7 +67,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="scripts\jquery-2.2.3.min.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -77,11 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="scripts\jorg-chart-1.0.js" />
-    <None Include="scripts\jquery-2.2.3.intellisense.js" />
-    <Content Include="scripts\jquery-2.2.3.js" />
-    <Content Include="scripts\jquery-2.2.3.min.js" />
     <Content Include="scripts\test.js" />
-    <None Include="scripts\_references.js" />
     <Content Include="Test.html" />
     <Content Include="Web.config" />
   </ItemGroup>
