@@ -16,10 +16,11 @@
         nodeMargin : 10, //Default to 5px
         nodeFont : "Arial",
         nodeTextColour : "rgba(0,0,0,1)",
-        nodeStyle : "fill:rgba(255,255,255,1);stroke:rgba(181,217,234,1);stroke-width:1;",
-        groupFont : "Arial",
-        groupTextColour : "rgba(0,0,0,1)",
-        groupPadding: 20, //Default to 20px
+        nodeStyle: "fill:rgba(255,255,255,1);stroke:rgba(181,217,234,1);stroke-width:1;",
+        groupTitleSize: 18,
+        groupFont: "Arial",
+        groupTextColour: "rgba(161,197,214,1)",
+        groupPadding: 15, //Default to 20px
         groupMargin: 20,//Default to 20px
         groupStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;",
         chartPadding: 10,
@@ -102,7 +103,7 @@ JOrganisationChart.prototype.addGroup = function (parentid, groupid, groupName, 
 
         parentGroup.children.push({
             id: groupid,
-            name: groupName,
+            title: groupName,
             type: "Group",
             nodes: nodes,
             onclick: groupOnclick,
@@ -113,7 +114,7 @@ JOrganisationChart.prototype.addGroup = function (parentid, groupid, groupName, 
         if (this.data.groups != undefined) {
             this.data.groups.push({
                 id: groupid,
-                name: groupName,
+                title: groupName,
                 type: "Group",
                 nodes: nodes,
                 onclick: groupOnclick,
@@ -407,6 +408,17 @@ JOrganisationChart.prototype.calculateGroupSize = function (group, settings, inc
         dimensions.width = settings.groupPadding * 2;
         dimensions.height = settings.groupPadding * 2;
 
+        if (group.title != undefined && group.title.length > 0) {
+            dimensions.height = dimensions.height + settings.groupTitleSize;
+
+            var titleWidth = this.calculateTextWidth(group.title, settings.groupTitleSize);
+
+            if(dimensions.width < (titleWidth + (settings.groupPadding * 2)))
+            {
+                dimensions.width = titleWidth + (settings.groupPadding * 2);
+            }
+        }
+
         if (group.nodes != undefined && group.nodes.length > 0) {
 
             //Size of this row           
@@ -485,7 +497,7 @@ JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group, se
         groupBoxSVG.setAttribute('height', grpDimensions.height);
         groupBoxSVG.setAttribute("style", settings.groupStyle);
 
-        if (group.name != undefined) { groupBoxSVG.setAttribute("data-name", group.name); }
+        if (group.title != undefined) { groupBoxSVG.setAttribute("data-title", group.title); }
         if (group.onclick != undefined){ groupBoxSVG.setAttribute('onclick', group.onclick); }
         if (group.onactivate != undefined) { groupBoxSVG.setAttribute('onactivate', group.onactivate); }
         if (group.onmousedown != undefined) { groupBoxSVG.setAttribute('onmousedown ', group.onmousedown); }
@@ -496,12 +508,31 @@ JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group, se
 
         svgElement.appendChild(groupBoxSVG);
 
-        var gcy = (cy + settings.groupPadding)
+        var carrageLoc = cy + settings.groupPadding;
+
+        if (group.title != undefined && group.title.length > 0) {
+
+            carrageLoc = carrageLoc + (settings.groupTitleSize * 0.75);
+
+            //Render Title
+            var groupTitleSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            groupTitleSVG.setAttribute('text-anchor', 'middle');
+            groupTitleSVG.setAttribute('alignment-baseline', 'central');
+            groupTitleSVG.setAttribute('x', cx);
+            groupTitleSVG.setAttribute('y', carrageLoc);
+            groupTitleSVG.setAttribute("fill", settings.groupTextColour);
+            groupTitleSVG.setAttribute("style", "font-family:" + settings.groupFont + "; font-size:" + settings.groupTitleSize + "px;cursor:default;");
+            groupTitleSVG.textContent = group.title;
+
+            svgElement.appendChild(groupTitleSVG);
+
+            carrageLoc = carrageLoc + (settings.groupTitleSize * 0.25);
+        }
 
         if (group.nodes != undefined && group.nodes.length > 0) {
 
             //Draw Row
-            this.drawNodeRow(cx, gcy, svgElement, group.nodes, settings, true)
+            this.drawNodeRow(cx, carrageLoc, svgElement, group.nodes, settings, true)
         }
     }
 }
@@ -602,7 +633,7 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
 		    nodeBoxSVG.setAttribute("style", settings.nodeStyle);
 		}
 
-		if (nodeData.name != undefined) { nodeBoxSVG.setAttribute("data-name", nodeData.name); }
+		if (nodeData.title != undefined) { nodeBoxSVG.setAttribute("data-title", nodeData.title); }
 		if (nodeData.onclick != undefined) { nodeBoxSVG.setAttribute('onclick', nodeData.onclick); }
 		if (nodeData.onactivate != undefined) { nodeBoxSVG.setAttribute('onactivate', nodeData.onactivate); }
 		if (nodeData.onmousedown != undefined) { nodeBoxSVG.setAttribute('onmousedown ', nodeData.onmousedown); }
@@ -625,7 +656,7 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
 		    nodeTitleSVG.setAttribute('x', cx);
 		    nodeTitleSVG.setAttribute('y', carrageLoc);
 		    nodeTitleSVG.setAttribute("fill", settings.nodeTextColour);
-		    nodeTitleSVG.setAttribute("style", "font-family:" + settings.nodeFont + "; font-size:" + settings.nodeTitleSize + "px;");
+		    nodeTitleSVG.setAttribute("style", "font-family:" + settings.nodeFont + "; font-size:" + settings.nodeTitleSize + "px;cursor:default;");
 		    nodeTitleSVG.textContent = nodeData.title;
 
 		    svgElement.appendChild(nodeTitleSVG);
@@ -646,7 +677,7 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
                 nodeTextSVG.setAttribute('x', cx);
                 nodeTextSVG.setAttribute('y', carrageLoc);
                 nodeTextSVG.setAttribute("fill", settings.nodeTextColour);
-                nodeTextSVG.setAttribute("style", "font-family:" + settings.nodeFont + "; font-size:" + settings.nodeTextSize + "px;");
+                nodeTextSVG.setAttribute("style", "font-family:" + settings.nodeFont + "; font-size:" + settings.nodeTextSize + "px;cursor:default;");
                 nodeTextSVG.textContent = nodeData.text[i];
                 svgElement.appendChild(nodeTextSVG);
 

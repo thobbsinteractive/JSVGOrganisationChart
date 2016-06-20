@@ -4,7 +4,7 @@
         groups: [
             {
                 id: "1",
-                name: "Test Group 1",
+                title: "Test Group 1",
                 type: "Group",
                 nodes: [
                     { id: "1", type: "Node", title: "Mrs D", text: ["Director", "Paid loads"] }
@@ -12,7 +12,7 @@
             },
             {
                 id: "2",
-                name: "Test Group 2",
+                title: "Test Group 2",
                 type: "Group",
                 nodes: [
                     {
@@ -51,7 +51,7 @@
                     {
                         id: "3",
                         type: "Group",
-                        name: "Test 2",
+                        title: "Test 2",
                         nodes: [
                             {
                                 id: "12", type: "Node", title: "Business Manager", text: ["BM", "Does Stuff"], children:
@@ -65,7 +65,7 @@
                     {
                         id: "4",
                         type: "Group",
-                        name: "Test 3",
+                        title: "Test 3",
                         nodes: [
                             {
                                 id: "15", type: "Node", title: "Business Manager 2", text: ["BM", "Does Stuff"], children:
@@ -79,7 +79,7 @@
                             {
                                 id: "5",
                                 type: "Group",
-                                name: "Test 9",
+                                title: "Test 9",
                                 nodes: [
                                     {
                                         id: "18", type: "Node", title: "Business Manager", text: ["BM", "Does Stuff"], children:
