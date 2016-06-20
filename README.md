@@ -1,5 +1,7 @@
 # JSVGOrganisationChart
-A free Javascript SVG Organisation Chart with Optional Grouping, Styling and Navigation methods.
+A Javascript SVG Organisation Chart with Optional Grouping, Styling and Navigation methods:
+
+![alt text](https://github.com/thobbsinteractive/JOrganisationChart/blob/master/basicSVGChartExample.png "Basic Example")
 
 ```
 <!DOCTYPE html>
@@ -17,6 +19,7 @@ A free Javascript SVG Organisation Chart with Optional Grouping, Styling and Nav
 ```
 ```javascript
     var chart = new JOrganisationChart(document.getElementById("mySVG"));
+    
     chart.addGroup(undefined, "Grp1", "Directors");
     chart.addNode("Grp1", undefined, "Node1", "Mr Director", ["Manager", "Runs Everything"]);
     chart.addNode("Grp1", undefined, "Node2", "Mrs Money", ["Finance Manager", "Pays for Everything"]);
@@ -30,6 +33,7 @@ A free Javascript SVG Organisation Chart with Optional Grouping, Styling and Nav
     chart.addNode("Grp2", "Node2.1.1", "Node2.1.1.1", "Mr Student", ["Placement Dude", "Tests"]);
     chart.addNode("Grp2", "Node2.1", "Node2.1.2", "Mrs Software Developer 2", ["Software Developer", "Makes Codes"]);
     chart.addNode("Grp2", "Node2.1", "Node2.1.3", "Mr Software Developer 3", ["Software Developer", "Turns Water into Wine"]);
+    
     chart.addGroup("Grp1", "Grp3", "Support Team");
     chart.addNode("Grp3", undefined, "Node3.1", "Mrs Support Manager", ["Business Manager", "Orders Lackies"]);
     chart.addNode("Grp3", "Node3.1", "Node3.1.1", "Mr", ["1st Line Support", "Phone Jocky"]);
