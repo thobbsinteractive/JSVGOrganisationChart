@@ -168,7 +168,7 @@ JOrganisationChart.prototype.addNode = function (groupid, parentid, nodeid, node
             }
         } else
         {
-            if(group.nodes != undefined)
+            if(group.nodes == undefined)
             {
                 group.nodes = [];
             }
