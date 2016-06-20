@@ -1,5 +1,5 @@
 # JSVGOrganisationChart
-A free Javascript SVG Organisation Chart.
+A free Javascript SVG Organisation Chart with Optional Grouping, Styling and Navigation methods.
 
 ```
 <!DOCTYPE html>
@@ -27,6 +27,7 @@ A free Javascript SVG Organisation Chart.
     chart.addGroup("Grp1", "Grp2", "Software Developers");
     chart.addNode("Grp2", undefined, "Node2.1", "Mr Manager", ["Business Manager", "Orders Lackies"]);
     chart.addNode("Grp2", "Node2.1", "Node2.1.1", "Mr Software Developer 1", ["Software Developer", "Makes Bugs", "Cleans Office"]);
+    chart.addNode("Grp2", "Node2.1.1", "Node2.1.1.1", "Mr Student", ["Placement Dude", "Tests"]);
     chart.addNode("Grp2", "Node2.1", "Node2.1.2", "Mrs Software Developer 2", ["Software Developer", "Makes Codes"]);
     chart.addNode("Grp2", "Node2.1", "Node2.1.3", "Mr Software Developer 3", ["Software Developer", "Turns Water into Wine"]);
     chart.addGroup("Grp1", "Grp3", "Support Team");
