@@ -408,17 +408,6 @@ JOrganisationChart.prototype.calculateGroupSize = function (group, settings, inc
         dimensions.width = settings.groupPadding * 2;
         dimensions.height = settings.groupPadding * 2;
 
-        if (group.title != undefined && group.title.length > 0) {
-            dimensions.height = dimensions.height + settings.groupTitleSize;
-
-            var titleWidth = this.calculateTextWidth(group.title, settings.groupTitleSize);
-
-            if(dimensions.width < (titleWidth + (settings.groupPadding * 2)))
-            {
-                dimensions.width = titleWidth + (settings.groupPadding * 2);
-            }
-        }
-
         if (group.nodes != undefined && group.nodes.length > 0) {
 
             //Size of this row           
@@ -426,6 +415,16 @@ JOrganisationChart.prototype.calculateGroupSize = function (group, settings, inc
 
             dimensions.width = dimensions.width + rowDimensions.width;
             dimensions.height = dimensions.height + rowDimensions.height;
+        }
+
+        if (group.title != undefined && group.title.length > 0) {
+            dimensions.height = dimensions.height + settings.groupTitleSize;
+
+            var titleWidth = this.calculateTextWidth(group.title, settings.groupTitleSize);
+
+            if (dimensions.width < (titleWidth + (settings.groupPadding * 2))) {
+                dimensions.width = titleWidth + (settings.groupPadding * 2);
+            }
         }
 
         if (includeMargins != undefined && includeMargins == true) {
