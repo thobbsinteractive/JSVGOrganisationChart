@@ -45,6 +45,8 @@
 	    if (settings.groupPadding != undefined) { this.settings.groupPadding = settings.groupPadding };
 	    if (settings.groupMargin != undefined) { this.settings.groupMargin = settings.groupMargin };
 	    if (settings.chartPadding != undefined) { this.settings.chartPadding = settings.chartPadding };
+	    if (settings.nodeLineStyle != undefined) { this.settings.nodeLineStyle = settings.nodeLineStyle };
+	    if (settings.groupLineStyle != undefined) { this.settings.groupLineStyle = settings.groupLineStyle };
 	}
 
 	if (svgElement != undefined)
