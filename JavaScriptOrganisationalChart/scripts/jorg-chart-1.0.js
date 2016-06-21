@@ -34,7 +34,7 @@
 	    if (settings.nodeTitleSize != undefined) { this.settings.nodeTitleSize = settings.nodeTitleSize };
 	    if (settings.nodeLineSpacing != undefined) { this.settings.nodeLineSpacing = settings.nodeLineSpacing };
 	    if (settings.nodeTextSize != undefined) { this.settings.nodeTextSize = settings.nodeTextSize };
-	    if (settings.nodePadding != nodePadding) { this.settings.nodePadding = settings.nodePadding };
+	    if (settings.nodePadding != undefined) { this.settings.nodePadding = settings.nodePadding };
 	    if (settings.nodeMargin != undefined) { this.settings.nodeMargin = settings.nodeMargin };
 	    if (settings.nodeFont != undefined) { this.settings.nodeFont = settings.nodeFont };
 	    if (settings.groupFont != undefined) { this.settings.groupFont = settings.groupFont };
