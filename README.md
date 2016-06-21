@@ -1,5 +1,5 @@
 # JSVGOrganisationChart
-A Javascript SVG Organisation Chart with Optional Grouping, Styling and Navigation methods:
+A FREE Javascript SVG Organisation Chart with Optional Grouping, Styling and Navigation methods:
 
 ![alt text](https://github.com/thobbsinteractive/JOrganisationChart/blob/master/basicSVGChartExample.png "Basic Example")
 
