@@ -85,6 +85,75 @@
 	}
 }
 
+JOrganisationChart.prototype.getSVGXML = function(svgElement)
+{
+    var svg = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
+
+    if (svgElement != undefined) {
+        var outer = document.createElement('div');
+        outer.appendChild(svgElement.cloneNode(true));
+
+        svg = svg + outer.innerHTML;
+
+        //Remove script element as this will NOT convert to XML
+        var svgStart = svg.split("<script type=\"application/ecmascript\">")[0];
+        var svgEnd = svg.split("</script>")[1];
+        svg = svgStart + svgEnd;
+    }
+    return svg;
+}
+
+JOrganisationChart.prototype.getImageDownloadLink = function (svgElement, canvasElement, linkText) {
+
+    var alink = document.createElement("a");
+    alink.text = linkText;
+
+    if (svgElement != undefined) {
+
+        var canvasElement = document.createElement("canvas");
+
+        this.drawToCanvas(svgElement, canvasElement, alink);
+    }
+
+    return alink;
+}
+
+JOrganisationChart.prototype.drawToCanvas = function (svgElement, canvasElement, linkElement) {
+
+    var width = 100;
+    var height = 100;
+
+    if (svgElement != undefined && canvasElement != undefined) {
+        width = parseInt(svgElement.getAttribute("width"));
+        height = parseInt(svgElement.getAttribute("height"));
+
+        canvasElement.width = width;
+        canvasElement.height = height;
+        context = canvasElement.getContext("2d");
+
+        var imgsrc = 'data:image/svg+xml;base64,' + window.btoa(this.getSVGXML(svgElement));
+
+        var image = new Image;
+        image.src = imgsrc;
+        image.onload = function () {
+            context.drawImage(image, 0, 0);
+
+            if (linkElement != undefined) {
+                try {
+                    var canvasdata = canvasElement.toDataURL("image/png");
+                    linkElement.download = "OrganisationChart.png";
+                    linkElement.href = canvasdata;
+
+                } catch (exception) {
+
+                }
+            }
+
+        };
+    }
+
+}
+
 JOrganisationChart.prototype.addGroup = function (parentid, groupid, groupName, nodes, nodeStyle, groupOnclick, groupOnmouseover, groupOnmouseout) {
     var parentGroup = undefined;
 
