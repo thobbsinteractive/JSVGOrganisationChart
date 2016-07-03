@@ -53,24 +53,24 @@
 	{
 	    //Default built-in functions
         var chartMethods = ''+
-                'function navigateTo(event, url) {' +
-                    'if(event.target != undefined && url != undefined)' +
-                    '{' +
-                        'window.location.href = url;' +
-                    '}' +
-               '}' +
-               'function openTo(event, url) {' +
-                    'if(event.target != undefined && url != undefined)' +
-                    '{' +
-                        'window.open(url,"_blank");' +
-                    '}' +
-               '}' +
-               'function setStyle(event,newStyle) {' +
-                    'if(event.target != undefined && newStyle != undefined)' +
-                    '{' +
-                        'event.target.setAttribute("style",newStyle);' +
-                    '}' +
-               '}'
+                'function navigateTo(event, url) {\n' +
+                    'if(event.target != undefined && url != undefined)\n' +
+                    '{\n' +
+                        'window.location.href = url;\n' +
+                    '}\n' +
+               '}\n' +
+               'function openTo(event, url) {\n' +
+                    'if(event.target != undefined && url != undefined)\n' +
+                    '{\n' +
+                        'window.open(url,"_blank");\n' +
+                    '}\n' +
+               '}\n' +
+               'function setStyle(event,newStyle) {\n' +
+                    'if(event.target != undefined && newStyle != undefined)\n' +
+                    '{\n' +
+                        'event.target.setAttribute("style",newStyle);\n' +
+                    '}\n' +
+               '}\n'
 
 
         var scriptElement = document.createElement("script");
@@ -721,6 +721,7 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
 		    carrageLoc = carrageLoc + (settings.nodeTitleSize * 0.75);
 		    //Render Title
 		    var nodeTitleSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
+
 		    nodeTitleSVG.setAttribute('text-anchor', 'middle');
 		    nodeTitleSVG.setAttribute('alignment-baseline', 'central');
 		    nodeTitleSVG.setAttribute('x', cx);
