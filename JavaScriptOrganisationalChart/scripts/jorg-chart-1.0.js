@@ -66,9 +66,33 @@
                     '}\n' +
                '}\n' +
                'function setStyle(event,newStyle) {\n' +
-                    'if(event.target != undefined && newStyle != undefined)\n' +
-                    '{\n' +
-                        'event.target.setAttribute("style",newStyle);\n' +
+                    'if(event.target != undefined && newStyle != undefined) {\n' +
+                        'if(event.target.getAttribute("data-parentid") != undefined && event.target.nodeName == "text") {\n' +
+                            'if(newStyle.indexOf("cursor") > -1){\n' +
+                                'var cusorStyle = undefined;\n' +
+                            '   newStyle.split(";").forEach(function(item,index){\n'+
+                            '       if(item.indexOf("cursor") > -1){\n' +
+                            '           event.target.style.cursor = item.replace("cursor:","");\n' +  
+                            '       } \n' +
+                            '   })\n' +
+                            '}\n' +
+                            'var parentid = event.target.getAttribute("data-parentid");\n' +
+                            'var elements = document.getElementsByTagName("rect");\n' +
+                            'var nodeElement = undefined;\n' +
+                            'for (i = 0; i < elements.length; i++) {\n' +
+                                'if(elements[i].getAttribute("data-id") == parentid)\n' +
+                                '{\n' +
+                                    'nodeElement = elements[i];\n' +
+                                    'break;\n' +
+                                '}\n' +
+                            '}\n' +
+                            'if(nodeElement != undefined){\n' +
+                                'nodeElement.setAttribute("style",newStyle);\n' +
+                            '}\n' +
+                        '}\n' +
+                        'else {\n' +
+                            'event.target.setAttribute("style",newStyle);\n' +
+                        '}\n' +
                     '}\n' +
                '}\n'
 
@@ -586,6 +610,17 @@ JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group, se
 
             //Render Title
             var groupTitleSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
+
+            groupTitleSVG.setAttribute('data-parentid', group.id);
+
+            if (group.onclick != undefined) { groupTitleSVG.setAttribute('onclick', group.onclick); }
+            if (group.onactivate != undefined) { groupTitleSVG.setAttribute('onactivate', group.onactivate); }
+            if (group.onmousedown != undefined) { groupTitleSVG.setAttribute('onmousedown ', group.onmousedown); }
+            if (group.onmouseup != undefined) { groupTitleSVG.setAttribute('onmouseup', group.onmouseup); }
+            if (group.onmouseover != undefined) { groupTitleSVG.setAttribute('onmouseover', group.onmouseover); }
+            if (group.onmousemove != undefined) { groupTitleSVG.setAttribute('onmousemove', group.onmousemove); }
+            if (group.onmouseout != undefined) { groupTitleSVG.setAttribute('onmouseout', group.onmouseout); }
+
             groupTitleSVG.setAttribute('text-anchor', 'middle');
             groupTitleSVG.setAttribute('alignment-baseline', 'central');
             groupTitleSVG.setAttribute('x', cx);
@@ -690,7 +725,8 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
         var dimensions = this.calculateNodeSize(nodeData, settings);
 
         //Draw node box
-		var nodeBoxSVG = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        var nodeBoxSVG = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        nodeBoxSVG.setAttribute('data-id', nodeData.id);
 		nodeBoxSVG.setAttribute('x', cx - (dimensions.width / 2));
 		nodeBoxSVG.setAttribute('y', cy);
 		nodeBoxSVG.setAttribute('width', dimensions.width);
@@ -721,6 +757,15 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
 		    carrageLoc = carrageLoc + (settings.nodeTitleSize * 0.75);
 		    //Render Title
 		    var nodeTitleSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
+		    nodeTitleSVG.setAttribute('data-parentid', nodeData.id);
+
+		    if (nodeData.onclick != undefined) { nodeTitleSVG.setAttribute('onclick', nodeData.onclick); }
+		    if (nodeData.onactivate != undefined) { nodeTitleSVG.setAttribute('onactivate', nodeData.onactivate); }
+		    if (nodeData.onmousedown != undefined) { nodeTitleSVG.setAttribute('onmousedown ', nodeData.onmousedown); }
+		    if (nodeData.onmouseup != undefined) { nodeTitleSVG.setAttribute('onmouseup', nodeData.onmouseup); }
+		    if (nodeData.onmouseover != undefined) { nodeTitleSVG.setAttribute('onmouseover', nodeData.onmouseover); }
+		    if (nodeData.onmousemove != undefined) { nodeTitleSVG.setAttribute('onmousemove', nodeData.onmousemove); }
+		    if (nodeData.onmouseout != undefined) { nodeTitleSVG.setAttribute('onmouseout', nodeData.onmouseout); }
 
 		    nodeTitleSVG.setAttribute('text-anchor', 'middle');
 		    nodeTitleSVG.setAttribute('alignment-baseline', 'central');
@@ -743,6 +788,17 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
                 carrageLoc = carrageLoc + (settings.nodeTextSize * 0.75);
 
                 var nodeTextSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
+
+                nodeTextSVG.setAttribute('data-parentid', nodeData.id);
+
+                if (nodeData.onclick != undefined) { nodeTextSVG.setAttribute('onclick', nodeData.onclick); }
+                if (nodeData.onactivate != undefined) { nodeTextSVG.setAttribute('onactivate', nodeData.onactivate); }
+                if (nodeData.onmousedown != undefined) { nodeTextSVG.setAttribute('onmousedown ', nodeData.onmousedown); }
+                if (nodeData.onmouseup != undefined) { nodeTextSVG.setAttribute('onmouseup', nodeData.onmouseup); }
+                if (nodeData.onmouseover != undefined) { nodeTextSVG.setAttribute('onmouseover', nodeData.onmouseover); }
+                if (nodeData.onmousemove != undefined) { nodeTextSVG.setAttribute('onmousemove', nodeData.onmousemove); }
+                if (nodeData.onmouseout != undefined) { nodeTextSVG.setAttribute('onmouseout', nodeData.onmouseout); }
+
                 nodeTextSVG.setAttribute('text-anchor', 'middle');
                 nodeTextSVG.setAttribute('alignment-baseline', 'central');
                 nodeTextSVG.setAttribute('x', cx);

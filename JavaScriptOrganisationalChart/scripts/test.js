@@ -8,7 +8,10 @@
                 type: "Group",
                 nodes: [
                     { id: "1", type: "Node", title: "Mrs D", text: ["Director", "Paid loads"] }
-                ]
+                ],
+                onclick: "openTo(event,'http://www.facebook.co.uk')",
+                onmouseover: "setStyle(event,'fill:rgba(217,227,235,1);stroke:rgba(181,217,234,1);stroke-width:4;cursor:pointer')",
+                onmouseout: "setStyle(event,'fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2cursor:auto;')"
             },
             {
                 id: "2",
@@ -35,8 +38,8 @@
                                 }
                             ],
                         onclick: "openTo(event,'http://www.bbc.co.uk')",
-                        onmouseover: "setStyle(event,'fill:rgba(240,240,240,1);stroke:rgba(181,217,234,1);stroke-width:2;')",
-                        onmouseout: "setStyle(event,'fill:rgba(255,255,255,1);stroke:rgba(181,217,234,1);stroke-width:1;')"
+                        onmouseover: "setStyle(event,'fill:rgba(240,240,240,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:pointer;')",
+                        onmouseout: "setStyle(event,'fill:rgba(255,255,255,1);stroke:rgba(181,217,234,1);stroke-width:1;cursor:auto;')"
                     },
                     {
                         id: "8", type: "Node", title: "Mrs Director", text: ["Owner", "Owns most of Russia"], children:
