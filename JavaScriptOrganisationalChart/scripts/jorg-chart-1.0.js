@@ -9,9 +9,9 @@
     //Defaults
     this.settings = {
         chartAlign : "centre",
-        nodeTitleSize : 16, //Default to 16px
+        nodeTitleStyle: "font-family:Arial;font-size:16px;cursor:default;",
         nodeLineSpacing : 5,
-        nodeTextSize : 12, //Default to 12px
+        nodeTextStyle: "font-family:Arial;font-size:12px;cursor:default;",
         nodePadding : 10, //Default to 10px
         nodeMargin : 10, //Default to 5px
         nodeFont : "Arial",
@@ -31,9 +31,9 @@
 
 	if (settings != undefined) {
 	    if (settings.chartAlign != undefined) { this.settings.chartAlign = settings.chartAlign };
-	    if (settings.nodeTitleSize != undefined) { this.settings.nodeTitleSize = settings.nodeTitleSize };
+	    if (settings.nodeTitleStyle != undefined) { this.settings.nodeTitleStyle = settings.nodeTitleStyle };
 	    if (settings.nodeLineSpacing != undefined) { this.settings.nodeLineSpacing = settings.nodeLineSpacing };
-	    if (settings.nodeTextSize != undefined) { this.settings.nodeTextSize = settings.nodeTextSize };
+	    if (settings.nodeTextStyle != undefined) { this.settings.nodeTextStyle = settings.nodeTextStyle };
 	    if (settings.nodePadding != undefined) { this.settings.nodePadding = settings.nodePadding };
 	    if (settings.nodeMargin != undefined) { this.settings.nodeMargin = settings.nodeMargin };
 	    if (settings.nodeFont != undefined) { this.settings.nodeFont = settings.nodeFont };
@@ -54,47 +54,52 @@
 	    //Default built-in functions
         var chartMethods = ''+
                 'function navigateTo(event, url) {\n' +
-                    'if(event.target != undefined && url != undefined)\n' +
-                    '{\n' +
-                        'window.location.href = url;\n' +
-                    '}\n' +
-               '}\n' +
-               'function openTo(event, url) {\n' +
-                    'if(event.target != undefined && url != undefined)\n' +
-                    '{\n' +
-                        'window.open(url,"_blank");\n' +
-                    '}\n' +
-               '}\n' +
-               'function setStyle(event,newStyle) {\n' +
-                    'if(event.target != undefined && newStyle != undefined) {\n' +
-                        'if(event.target.getAttribute("data-parentid") != undefined && event.target.nodeName == "text") {\n' +
-                            'if(newStyle.indexOf("cursor") > -1){\n' +
-                                'var cusorStyle = undefined;\n' +
-                            '   newStyle.split(";").forEach(function(item,index){\n'+
-                            '       if(item.indexOf("cursor") > -1){\n' +
-                            '           event.target.style.cursor = item.replace("cursor:","");\n' +  
-                            '       } \n' +
-                            '   })\n' +
-                            '}\n' +
-                            'var parentid = event.target.getAttribute("data-parentid");\n' +
-                            'var elements = document.getElementsByTagName("rect");\n' +
-                            'var nodeElement = undefined;\n' +
-                            'for (i = 0; i < elements.length; i++) {\n' +
-                                'if(elements[i].getAttribute("data-id") == parentid)\n' +
-                                '{\n' +
-                                    'nodeElement = elements[i];\n' +
-                                    'break;\n' +
-                                '}\n' +
-                            '}\n' +
-                            'if(nodeElement != undefined){\n' +
-                                'nodeElement.setAttribute("style",newStyle);\n' +
-                            '}\n' +
-                        '}\n' +
-                        'else {\n' +
-                            'event.target.setAttribute("style",newStyle);\n' +
-                        '}\n' +
-                    '}\n' +
-               '}\n'
+                '   if(event.target != undefined && url != undefined)\n' +
+                '   {\n' +
+                '       window.location.href = url;\n' +
+                '   }\n' +
+                '}\n' +
+                'function openTo(event, url) {\n' +
+                '   if(event.target != undefined && url != undefined)\n' +
+                '   {\n' +
+                '      window.open(url,"_blank");\n' +
+                '   }\n' +
+                '}\n' +
+                'function setStyle(event,newStyle) {\n' +
+                '   if(event.target != undefined && newStyle != undefined) {\n' +
+                '       event.target.setAttribute("style",newStyle);\n' +
+                '   }\n' +
+                '}\n' +
+                'function setNodeStyle(event, nodeStyle, titleStyle, textStyle) {\n' +
+                '   if(event.target != undefined && nodeStyle != undefined) {\n' +
+                '       if(event.target.nodeName == "text" && (event.target.getAttribute("data-type") == "title" || event.target.getAttribute("data-type") == "text")) {\n' +
+                '           if (event.target.getAttribute("data-parentid") != undefined) {\n' +
+                '               var parentid = event.target.getAttribute("data-parentid");\n' +
+                '               var elements = document.getElementsByTagName("rect");\n' +
+                '               var nodeElement = undefined;\n' +
+                '               for (i = 0; i < elements.length; i++) {\n' +
+                '                   if(elements[i].getAttribute("data-id") == parentid)\n' +
+                '                   {\n' +
+                '                       nodeElement = elements[i];\n' +
+                '                       break;\n' +
+                '                   }\n' +
+                '               }\n' +
+                '               if(nodeElement != undefined){\n' +
+                '                   nodeElement.setAttribute("style",nodeStyle);\n' +
+                '               }\n' +
+                '           }\n' +
+                '           if(event.target.getAttribute("data-type") == "title") {\n' +
+                '               event.target.setAttribute("style",titleStyle);\n' +
+                '           }\n' +
+                '           if(event.target.getAttribute("data-type") == "text") {\n' +
+                '               event.target.setAttribute("style", textStyle);\n' +
+                '           }\n' +
+                '       }\n' +
+                '       else {\n' +
+                '           event.target.setAttribute("style",nodeStyle);\n' +
+                '       }\n' +
+                '   }\n' +
+                '}\n'
 
 
         var scriptElement = document.createElement("script");
@@ -107,6 +112,26 @@
             this.drawChart(svgElement, chartData);
         }
 	}
+}
+
+JOrganisationChart.prototype.getFontSizeFromStyle = function(style)
+{
+    var fontSize = 12;
+
+    if (style != undefined) {
+        var parts = style.split(';');
+
+        if (parts != undefined && parts.length > 0) {
+            for (var i = 0; i < parts.length; i++) {
+                if (parts[i].indexOf('font-size:') > -1) {
+                    fontSize = Number(parts[i].replace('font-size:', '').replace('px', ''));
+                    break;
+                }
+            }
+        }
+    }
+    return fontSize;
+
 }
 
 JOrganisationChart.prototype.getSVGXML = function(svgElement)
@@ -459,8 +484,8 @@ JOrganisationChart.prototype.calculateNodeSize = function (nodeData, settings, i
 		//Measure Width (max line width + padding)
 		if (nodeData.title != undefined && nodeData.title.length > 0)
 		{
-		    dimensions.width = this.calculateTextWidth(nodeData.title, settings.nodeTitleSize);
-		    carrageLoc = carrageLoc + settings.nodeTitleSize + settings.nodeLineSpacing;
+		    dimensions.width = this.calculateTextWidth(nodeData.title, this.getFontSizeFromStyle(settings.nodeTitleStyle));
+		    carrageLoc = carrageLoc + this.getFontSizeFromStyle(settings.nodeTitleStyle) + settings.nodeLineSpacing;
 		}
 
 		if (nodeData.text != undefined && nodeData.text.length > 0)
@@ -469,8 +494,8 @@ JOrganisationChart.prototype.calculateNodeSize = function (nodeData, settings, i
 
 			for (var i = 0; i < nodeData.text.length;i++)
 			{
-			    carrageLoc = carrageLoc + settings.nodeTextSize;
-			    lineWidth = this.calculateTextWidth(nodeData.text[i], settings.nodeTextSize);
+			    carrageLoc = carrageLoc + this.getFontSizeFromStyle(settings.nodeTextStyle);
+			    lineWidth = this.calculateTextWidth(nodeData.text[i], this.getFontSizeFromStyle(settings.nodeTextStyle));
 				if (dimensions.width < lineWidth)
 				{
 					dimensions.width = lineWidth;
@@ -754,10 +779,11 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
 
 		if (nodeData.title != undefined && nodeData.title.length > 0) {
 
-		    carrageLoc = carrageLoc + (settings.nodeTitleSize * 0.75);
+		    carrageLoc = carrageLoc + (this.getFontSizeFromStyle(settings.nodeTitleStyle) * 0.75);
 		    //Render Title
 		    var nodeTitleSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
 		    nodeTitleSVG.setAttribute('data-parentid', nodeData.id);
+		    nodeTitleSVG.setAttribute('data-type', 'title');
 
 		    if (nodeData.onclick != undefined) { nodeTitleSVG.setAttribute('onclick', nodeData.onclick); }
 		    if (nodeData.onactivate != undefined) { nodeTitleSVG.setAttribute('onactivate', nodeData.onactivate); }
@@ -772,12 +798,12 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
 		    nodeTitleSVG.setAttribute('x', cx);
 		    nodeTitleSVG.setAttribute('y', carrageLoc);
 		    nodeTitleSVG.setAttribute("fill", settings.nodeTextColour);
-		    nodeTitleSVG.setAttribute("style", "font-family:" + settings.nodeFont + "; font-size:" + settings.nodeTitleSize + "px;cursor:default;");
+		    nodeTitleSVG.setAttribute("style",settings.nodeTitleStyle);
 		    nodeTitleSVG.textContent = nodeData.title;
 
 		    svgElement.appendChild(nodeTitleSVG);
 
-		    carrageLoc = carrageLoc + (settings.nodeTitleSize * 0.25);
+		    carrageLoc = carrageLoc + (this.getFontSizeFromStyle(settings.nodeTitleStyle) * 0.25);
 		    carrageLoc = carrageLoc + settings.nodeLineSpacing;
 		}
 
@@ -785,11 +811,12 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
         if (nodeData.text != undefined && nodeData.text.length > 0) {
             for (var i = 0; i < nodeData.text.length; i++) {
 
-                carrageLoc = carrageLoc + (settings.nodeTextSize * 0.75);
+                carrageLoc = carrageLoc + (this.getFontSizeFromStyle(settings.nodeTextStyle) * 0.75);
 
                 var nodeTextSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
 
                 nodeTextSVG.setAttribute('data-parentid', nodeData.id);
+                nodeTextSVG.setAttribute('data-type', 'text');
 
                 if (nodeData.onclick != undefined) { nodeTextSVG.setAttribute('onclick', nodeData.onclick); }
                 if (nodeData.onactivate != undefined) { nodeTextSVG.setAttribute('onactivate', nodeData.onactivate); }
@@ -804,11 +831,11 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, nodeData, 
                 nodeTextSVG.setAttribute('x', cx);
                 nodeTextSVG.setAttribute('y', carrageLoc);
                 nodeTextSVG.setAttribute("fill", settings.nodeTextColour);
-                nodeTextSVG.setAttribute("style", "font-family:" + settings.nodeFont + "; font-size:" + settings.nodeTextSize + "px;cursor:default;");
+                nodeTextSVG.setAttribute("style", settings.nodeTextStyle);
                 nodeTextSVG.textContent = nodeData.text[i];
                 svgElement.appendChild(nodeTextSVG);
 
-                carrageLoc = carrageLoc + (settings.nodeTextSize * 0.25);
+                carrageLoc = carrageLoc + (this.getFontSizeFromStyle(settings.nodeTextStyle) * 0.25);
 
                 if (i < (nodeData.text.length - 1)) {
                     carrageLoc = carrageLoc + settings.nodeLineSpacing;

@@ -38,8 +38,8 @@
                                 }
                             ],
                         onclick: "openTo(event,'http://www.bbc.co.uk')",
-                        onmouseover: "setStyle(event,'fill:rgba(240,240,240,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:pointer;')",
-                        onmouseout: "setStyle(event,'fill:rgba(255,255,255,1);stroke:rgba(181,217,234,1);stroke-width:1;cursor:auto;')"
+                        onmouseover: "setNodeStyle(event,'fill:rgba(240,240,240,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:pointer;','font-family:Arial;font-size:16px;cursor:pointer;','font-family:Arial;font-size:12px;cursor:pointer;')",
+                        onmouseout: "setNodeStyle(event,'fill:rgba(255,255,255,1);stroke:rgba(181,217,234,1);stroke-width:1;cursor:auto;','font-family:Arial;font-size:16px;cursor:default;','font-family:Arial;font-size:12px;cursor:default;')"
                     },
                     {
                         id: "8", type: "Node", title: "Mrs Director", text: ["Owner", "Owns most of Russia"], children:
