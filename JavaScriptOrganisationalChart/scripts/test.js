@@ -10,8 +10,8 @@
                     { id: "1", type: "Node", title: "Mrs D", text: ["Director", "Paid loads"] }
                 ],
                 onclick: "openTo(event,'http://www.facebook.co.uk')",
-                onmouseover: "setStyle(event,'fill:rgba(217,227,235,1);stroke:rgba(181,217,234,1);stroke-width:4;cursor:pointer')",
-                onmouseout: "setStyle(event,'fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2cursor:auto;')"
+                onmouseover: "setStyle(event,'fill:rgba(217,227,235,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:pointer;','font-family:Arial;font-size:18px;cursor:pointer;','font-family:Arial;font-size:18px;cursor:pointer;')",
+                onmouseout: "setStyle(event,'fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:auto;','font-family:Arial;font-size:18px;cursor:default;','font-family:Arial;font-size:18px;cursor:default;')"
             },
             {
                 id: "2",
@@ -19,76 +19,83 @@
                 type: "Group",
                 nodes: [
                     {
-                        id: "2", type: "Node", title: "Mr Director", text: ["Director", "Paid loads"], children:
+                        id: "1", type: "Node", title: "Mr Director", text: ["Director", "Paid loads"], children:
                             [
                                 {
-                                    id: "3", type: "Node", title: "The Cleaner", text: ["Middle Manager 1", "Paid a bit"], children:
+                                    id: "12", type: "Node", title: "The Cleaner", text: ["Middle Manager 1", "Paid a bit"], children:
                                         [
-                                            { id: "200", type: "Node", title: "The great Johnson", text: ["And Johnson", "Paid some"] },
-                                            { id: "201", type: "Node", title: "The less greate Johnson", text: ["And Johnson", "Paid some"] }
+                                            { id: "121", type: "Node", title: "The great Johnson", text: ["And Johnson", "Paid some"] },
+                                            { id: "122", type: "Node", title: "The less greate Johnson", text: ["And Johnson", "Paid some"] }
                                         ]
                                 },
-                                { id: "4", type: "Node", title: "The Partner", text: ["Middle Manager 2", "Paid a bit"] },
-                                { id: "5", type: "Node", title: "The Another", text: ["Middle Manager 3", "Paid a bit"] },
+                                { id: "13", type: "Node", title: "The Partner", text: ["Middle Manager 2", "Paid a bit"] },
+                                { id: "14", type: "Node", title: "The Another", text: ["Middle Manager 3", "Paid a bit"] },
                                 {
-                                    id: "6", type: "Node", title: "The Johnson", text: ["Middle Manager 4", "Paid a bit", "Worth the money"], children:
+                                    id: "141", type: "Node", title: "The Johnson", text: ["Middle Manager 4", "Paid a bit", "Worth the money"], children:
                                         [
-                                            { id: "7", type: "Node", title: "Johnson", text: ["And Johnson", "Paid some"] }
+                                            { id: "1411", type: "Node", title: "Johnson", text: ["And Johnson", "Paid some"] }
                                         ]
                                 }
                             ],
                         onclick: "openTo(event,'http://www.bbc.co.uk')",
-                        onmouseover: "setNodeStyle(event,'fill:rgba(240,240,240,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:pointer;','font-family:Arial;font-size:16px;cursor:pointer;','font-family:Arial;font-size:12px;cursor:pointer;')",
-                        onmouseout: "setNodeStyle(event,'fill:rgba(255,255,255,1);stroke:rgba(181,217,234,1);stroke-width:1;cursor:auto;','font-family:Arial;font-size:16px;cursor:default;','font-family:Arial;font-size:12px;cursor:default;')"
+                        onmouseover: "setStyle(event,'fill:rgba(240,240,240,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:pointer;','font-family:Arial;font-size:16px;cursor:pointer;','font-family:Arial;font-size:12px;cursor:pointer;')",
+                        onmouseout: "setStyle(event,'fill:rgba(255,255,255,1);stroke:rgba(181,217,234,1);stroke-width:1;cursor:auto;','font-family:Arial;font-size:16px;cursor:default;','font-family:Arial;font-size:12px;cursor:default;')"
                     },
                     {
-                        id: "8", type: "Node", title: "Mrs Director", text: ["Owner", "Owns most of Russia"], children:
+                        id: "2", type: "Node", title: "Mrs Director", text: ["Owner", "Owns most of Russia"], children:
                               [
-                                  { id: "9", type: "Node", title: "The Manager", text: ["Manager 1", "Paid a bit more"] },
-                                  { id: "10", type: "Node", title: "The Money", text: ["Accountant", "Paid a lot"] }
+                                  { id: "21", type: "Node", title: "The Manager", text: ["Manager 1", "Paid a bit more"] },
+                                  { id: "22", type: "Node", title: "The Money", text: ["Accountant", "Paid a lot"] }
                               ]
                     },
-                    { id: "11", type: "Node", title: "VP", text: ["Owner", "Owns most of Europe"] }
+                    { id: "3", type: "Node", title: "VP", text: ["Owner", "Owns most of Europe"] }
                 ],
                 children: [
                     {
-                        id: "3",
+                        id: "21",
                         type: "Group",
                         title: "Test 2",
                         nodes: [
                             {
-                                id: "12", type: "Node", title: "Business Manager", text: ["BM", "Does Stuff"], children:
+                                id: "1", type: "Node", title: "Business Manager", text: ["BM", "Does Stuff"], children:
                                 [
-                                  { id: "13", type: "Node", title: "Subordinate 1", text: ["Subordinate", "Paid"] },
-                                  { id: "14", type: "Node", title: "Subordinate 2", text: ["Subordinate", "Paid"] }
+                                  { id: "11", type: "Node", title: "Subordinate 1", text: ["Subordinate", "Paid"] },
+                                  { id: "12", type: "Node", title: "Subordinate 2", text: ["Subordinate", "Paid"] }
                                 ]
                             }
+                        ],
+                        orphannodes: [
+                            { id: "1", type: "OrphanNode", title: "Software", nodeStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:auto;", nodeTitleStyle: "font-family:Arial;font-size:24px;cursor:pointer;" },
+                            { id: "2", type: "OrphanNode", title: "Hardware", nodeStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:auto;", },
+                            { id: "3", type: "OrphanNode", title: "Spamware", nodeStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:auto;", },
+                            { id: "4", type: "OrphanNode", title: "Spyware", nodeStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:auto;", },
+                            { id: "5", type: "OrphanNode", title: "Cycleware", nodeStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:auto;", }
                         ]
                     },
                     {
-                        id: "4",
+                        id: "22",
                         type: "Group",
                         title: "Test 3",
                         nodes: [
                             {
-                                id: "15", type: "Node", title: "Business Manager 2", text: ["BM", "Does Stuff"], children:
+                                id: "1", type: "Node", title: "Business Manager 2", text: ["BM", "Does Stuff"], children:
                                 [
-                                  { id: "16", type: "Node", title: "Subordinate 3", text: ["Subordinate", "Paid"] },
-                                  { id: "17", type: "Node", title: "Subordinate 4", text: ["Subordinate", "Paid"] }
+                                  { id: "11", type: "Node", title: "Subordinate 3", text: ["Subordinate", "Paid"] },
+                                  { id: "12", type: "Node", title: "Subordinate 4", text: ["Subordinate", "Paid"] }
                                 ]
                             }
                         ],
                         children: [
                             {
-                                id: "5",
+                                id: "221",
                                 type: "Group",
                                 title: "Test 9",
                                 nodes: [
                                     {
-                                        id: "18", type: "Node", title: "Business Manager", text: ["BM", "Does Stuff"], children:
+                                        id: "1", type: "Node", title: "Business Manager", text: ["BM", "Does Stuff"], children:
                                         [
-                                          { id: "19", type: "Node", title: "Subordinate 7", text: ["Subordinate", "Paid"] },
-                                          { id: "20", type: "Node", title: "Subordinate 8", text: ["Subordinate", "Paid"] }
+                                          { id: "11", type: "Node", title: "Subordinate 7", text: ["Subordinate", "Paid"] },
+                                          { id: "12", type: "Node", title: "Subordinate 8", text: ["Subordinate", "Paid"] }
                                         ]
                                     }
                                 ]
@@ -109,6 +116,8 @@
 
     var linkElement = chart.getImageDownloadLink(document.getElementById("mySVG"), canvas, "Click to Download");
     document.body.appendChild(linkElement);
+
+    //var node = chart.findNode("22", "11");
 
     //chart.addGroup(undefined, "1000", "Top Group");
     //chart.addGroup("1000", "101", "Bot1 Group");
