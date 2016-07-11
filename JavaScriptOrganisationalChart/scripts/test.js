@@ -65,7 +65,7 @@
                             }
                         ],
                         orphannodes: [
-                            { id: "1", type: "OrphanNode", title: "Software", nodeStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:auto;", nodeTitleStyle: "font-family:Arial;font-size:24px;cursor:pointer;" },
+                            { id: "1", type: "OrphanNode", title: "Software", nodeStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:auto;", },
                             { id: "2", type: "OrphanNode", title: "Hardware", nodeStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:auto;", },
                             { id: "3", type: "OrphanNode", title: "Spamware", nodeStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:auto;", },
                             { id: "4", type: "OrphanNode", title: "Spyware", nodeStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;cursor:auto;", },
@@ -110,11 +110,7 @@
 
     var chart = new JOrganisationChart(document.getElementById("mySVG"), charData);
 
-    var canvas = document.createElement("canvas");
-
-    chart.drawToCanvas(document.getElementById("mySVG"), canvas);
-
-    var linkElement = chart.getImageDownloadLink(document.getElementById("mySVG"), canvas, "Click to Download");
+    var linkElement = chart.getImageDownloadLink(document.getElementById("mySVG"), "Click to Download");
     document.body.appendChild(linkElement);
 
     //var node = chart.findNode("22", "11");
