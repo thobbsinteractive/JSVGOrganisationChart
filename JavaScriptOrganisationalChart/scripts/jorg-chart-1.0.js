@@ -9,16 +9,13 @@
     //Defaults
     this.settings = {
         chartAlign : "centre",
-        nodeTitleStyle: "font-family:Arial;font-size:16px;cursor:default;",
+        nodeTitleStyle: "font-family:Arial;font-size:16px;cursor:default;fill:rgba(0,0,0,1)",
         nodeLineSpacing : 5,
-        nodeTextStyle: "font-family:Arial;font-size:12px;cursor:default;",
+        nodeTextStyle: "font-family:Arial;font-size:12px;cursor:default;fill:rgba(0,0,0,1)",
         nodePadding : 10, //Default to 10px
         nodeMargin : 10, //Default to 5px
-        nodeFont : "Arial",
-        nodeTextColour : "rgba(0,0,0,1)",
         nodeStyle: "fill:rgba(255,255,255,1);stroke:rgba(181,217,234,1);stroke-width:1;",
-        groupTitleStyle: "font-family:Arial;font-size:18px;cursor:default;",
-        groupTextColour: "rgba(161,197,214,1)",
+        groupTitleStyle: "font-family:Arial;font-size:18px;cursor:default;fill:rgba(161,197,214,1)",
         groupPadding: 15, //Default to 20px
         groupMargin: 20,//Default to 20px
         groupStyle: "fill:rgba(237,247,255,1);stroke:rgba(181,217,234,1);stroke-width:2;",
@@ -39,8 +36,6 @@
 	    if (settings.groupTitleStyle != undefined) { this.settings.groupTitleStyle = settings.groupTitleStyle };
 	    if (settings.nodeStyle != undefined) { this.settings.nodeStyle = settings.nodeStyle };
 	    if (settings.groupStyle != undefined) { this.settings.groupStyle = settings.groupStyle };
-	    if (settings.nodeTextColour != undefined) { this.settings.nodeTextColour = settings.nodeTextColour };
-	    if (settings.groupTextColour != undefined) { this.settings.groupTextColour = settings.groupTextColour };
 	    if (settings.groupPadding != undefined) { this.settings.groupPadding = settings.groupPadding };
 	    if (settings.groupMargin != undefined) { this.settings.groupMargin = settings.groupMargin };
 	    if (settings.chartPadding != undefined) { this.settings.chartPadding = settings.chartPadding };
@@ -646,7 +641,19 @@ JOrganisationChart.prototype.calculateGroupSize = function (group, settings, inc
 
 JOrganisationChart.prototype.calculateTextWidth = function(text,fontSize)
 {
-    return text.length * (fontSize / 2);
+    var width = 0;
+    for (var i = 0;i < text.length;i++)
+    {
+        if(text[i] == text[i].toUpperCase())
+        {
+            width += fontSize * 0.75;
+        }else
+        {
+            width += fontSize * 0.5;
+        }
+    }
+    
+    return width;
 }
 
 JOrganisationChart.prototype.drawGroupRow = function (cx, cy, svgElement, groups, settings, isFirstNode) {
@@ -740,7 +747,6 @@ JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group, se
             groupTitleSVG.setAttribute('alignment-baseline', 'central');
             groupTitleSVG.setAttribute('x', cx);
             groupTitleSVG.setAttribute('y', carrageLoc);
-            groupTitleSVG.setAttribute("fill", settings.groupTextColour);
             groupTitleSVG.setAttribute("style", settings.groupTitleStyle);
             groupTitleSVG.textContent = group.title;
 
@@ -894,7 +900,6 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, groupid, n
 		    nodeTitleSVG.setAttribute('alignment-baseline', 'central');
 		    nodeTitleSVG.setAttribute('x', cx);
 		    nodeTitleSVG.setAttribute('y', carrageLoc);
-		    nodeTitleSVG.setAttribute("fill", settings.nodeTextColour);
 
 		    var nodeTitleStyle = settings.nodeTitleStyle;
 		    if (nodeData.nodeTitleStyle != undefined) {
@@ -933,7 +938,6 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, groupid, n
                 nodeTextSVG.setAttribute('alignment-baseline', 'central');
                 nodeTextSVG.setAttribute('x', cx);
                 nodeTextSVG.setAttribute('y', carrageLoc);
-                nodeTextSVG.setAttribute("fill", settings.nodeTextColour);
 
                 var nodeTextStyle = settings.nodeTextStyle;
                 if (nodeData.nodeTextStyle != undefined) {
