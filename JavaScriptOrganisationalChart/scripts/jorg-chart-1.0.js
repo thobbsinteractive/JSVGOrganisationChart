@@ -148,7 +148,9 @@ JOrganisationChart.prototype.getImageDownloadLink = function (svgElement, linkTe
     var alink = document.createElement("a");
     alink.text = "For IE right click and select 'Save picture as'";
 
-    if (svgElement != undefined) {
+    var au = navigator.userAgent;
+
+    if (svgElement != undefined && au.indexOf("Edge") < 0) {
 
         var canvasElement = document.createElement("canvas");
 
@@ -912,25 +914,6 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, groupid, n
 
 		if (nodeData.title != undefined && nodeData.title.length > 0) {
 
-		    carrageLoc = carrageLoc + (this.getFontSizeFromStyle(settings.nodeTitleStyle) * 0.75);
-		    //Render Title
-		    var nodeTitleSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
-		    nodeTitleSVG.setAttribute('data-parentid', 'groupid=' + groupid + ';nodeid=' + nodeData.id);
-		    nodeTitleSVG.setAttribute('data-type', 'title');
-
-		    if (nodeData.onclick != undefined) { nodeTitleSVG.setAttribute('onclick', nodeData.onclick); }
-		    if (nodeData.onactivate != undefined) { nodeTitleSVG.setAttribute('onactivate', nodeData.onactivate); }
-		    if (nodeData.onmousedown != undefined) { nodeTitleSVG.setAttribute('onmousedown ', nodeData.onmousedown); }
-		    if (nodeData.onmouseup != undefined) { nodeTitleSVG.setAttribute('onmouseup', nodeData.onmouseup); }
-		    if (nodeData.onmouseover != undefined) { nodeTitleSVG.setAttribute('onmouseover', nodeData.onmouseover); }
-		    if (nodeData.onmousemove != undefined) { nodeTitleSVG.setAttribute('onmousemove', nodeData.onmousemove); }
-		    if (nodeData.onmouseout != undefined) { nodeTitleSVG.setAttribute('onmouseout', nodeData.onmouseout); }
-
-		    nodeTitleSVG.setAttribute('text-anchor', 'middle');
-		    nodeTitleSVG.setAttribute('alignment-baseline', 'central');
-		    nodeTitleSVG.setAttribute('x', cx);
-		    nodeTitleSVG.setAttribute('y', carrageLoc);
-
 		    var nodeTitleStyle = "";
 
 		    if (nodeData.type == "Node") {
@@ -949,6 +932,26 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, groupid, n
 		        }
 		    }
 
+		    carrageLoc = carrageLoc + (this.getFontSizeFromStyle(nodeTitleStyle) * 0.75);
+
+		    //Render Title
+		    var nodeTitleSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
+		    nodeTitleSVG.setAttribute('data-parentid', 'groupid=' + groupid + ';nodeid=' + nodeData.id);
+		    nodeTitleSVG.setAttribute('data-type', 'title');
+
+		    if (nodeData.onclick != undefined) { nodeTitleSVG.setAttribute('onclick', nodeData.onclick); }
+		    if (nodeData.onactivate != undefined) { nodeTitleSVG.setAttribute('onactivate', nodeData.onactivate); }
+		    if (nodeData.onmousedown != undefined) { nodeTitleSVG.setAttribute('onmousedown ', nodeData.onmousedown); }
+		    if (nodeData.onmouseup != undefined) { nodeTitleSVG.setAttribute('onmouseup', nodeData.onmouseup); }
+		    if (nodeData.onmouseover != undefined) { nodeTitleSVG.setAttribute('onmouseover', nodeData.onmouseover); }
+		    if (nodeData.onmousemove != undefined) { nodeTitleSVG.setAttribute('onmousemove', nodeData.onmousemove); }
+		    if (nodeData.onmouseout != undefined) { nodeTitleSVG.setAttribute('onmouseout', nodeData.onmouseout); }
+
+		    nodeTitleSVG.setAttribute('text-anchor', 'middle');
+		    nodeTitleSVG.setAttribute('alignment-baseline', 'central');
+		    nodeTitleSVG.setAttribute('x', cx);
+		    nodeTitleSVG.setAttribute('y', carrageLoc);
+
 		    nodeTitleSVG.setAttribute("style", nodeTitleStyle);
 		    nodeTitleSVG.textContent = nodeData.title;
 
@@ -962,7 +965,12 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, groupid, n
         if (nodeData.text != undefined && nodeData.text.length > 0) {
             for (var i = 0; i < nodeData.text.length; i++) {
 
-                carrageLoc = carrageLoc + (this.getFontSizeFromStyle(settings.nodeTextStyle) * 0.75);
+                var nodeTextStyle = settings.nodeTextStyle;
+                if (nodeData.nodeTextStyle != undefined) {
+                    nodeTextStyle = nodeData.nodeTextStyle;
+                }
+
+                carrageLoc = carrageLoc + (this.getFontSizeFromStyle(nodeTextStyle) * 0.75);
 
                 var nodeTextSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
 
@@ -981,11 +989,6 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, groupid, n
                 nodeTextSVG.setAttribute('alignment-baseline', 'central');
                 nodeTextSVG.setAttribute('x', cx);
                 nodeTextSVG.setAttribute('y', carrageLoc);
-
-                var nodeTextStyle = settings.nodeTextStyle;
-                if (nodeData.nodeTextStyle != undefined) {
-                    nodeTextStyle = nodeData.nodeTextStyle;
-                }
 
                 nodeTextSVG.setAttribute("style", nodeTextStyle);
                 nodeTextSVG.textContent = nodeData.text[i];
