@@ -423,6 +423,16 @@ JOrganisationChart.prototype.drawChart = function(svgElement, chartData){
     }
 }
 
+JOrganisationChart.prototype.getChartSize = function (chartData) {
+
+    if (chartData == undefined)
+    {
+        chartData = this.data;
+    }
+
+    return this.calculateRowSize(chartData.groups, this.settings, true);
+}
+
 JOrganisationChart.prototype.calculateTotalChildRowHeight = function (items, settings) {
     var maxHeight = 0;
 
