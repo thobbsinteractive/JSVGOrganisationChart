@@ -7,7 +7,7 @@ Why not use Google's Structure Chart instead?
 
 2: This is SVG with a (Webkit only) optional link to save as an image.
 
-3: You can get an exact measurement Chart Size, handy for setting div sizes.
+3: You can get an exact measurement of Chart Size, handy for setting div sizes.
 
 ![alt text](https://github.com/thobbsinteractive/JOrganisationChart/blob/master/basicSVGChartExample.png "Basic Example")
 
