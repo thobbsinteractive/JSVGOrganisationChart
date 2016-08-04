@@ -1,4 +1,12 @@
-﻿function JOrganisationChart(svgElement, chartData, settings)
+﻿/**
+ * Creates a JSVGOrganisationChart Object.
+ *
+ * @constructor
+ * @param {Element Object} svgElement - Required, the SVG tag element the Chart will use.
+ * @param {ChartStructure Object} chart data - Optional. If you'd prefer to preconstruct your chart structure you can and your chart will be immediatly drawn.
+ * @param {Settings Object} settings data - Optional. Default fonts, colours, margins, paddings etc. will be used if not specified.
+ */
+function JSVGOrganisationChart(svgElement, chartData, settings)
 {
     this.data = {
         groups: []
@@ -105,45 +113,16 @@
 	}
 }
 
-JOrganisationChart.prototype.getFontSizeFromStyle = function(style)
-{
-    var fontSize = 12;
+/** Public Methods */
 
-    if (style != undefined) {
-        var parts = style.split(';');
-
-        if (parts != undefined && parts.length > 0) {
-            for (var i = 0; i < parts.length; i++) {
-                if (parts[i].indexOf('font-size:') > -1) {
-                    fontSize = Number(parts[i].replace('font-size:', '').replace('px', ''));
-                    break;
-                }
-            }
-        }
-    }
-    return fontSize;
-
-}
-
-JOrganisationChart.prototype.getSVGXML = function(svgElement)
-{
-    var svg = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
-
-    if (svgElement != undefined) {
-        var outer = document.createElement('div');
-        outer.appendChild(svgElement.cloneNode(true));
-
-        svg = svg + outer.innerHTML;
-
-        //Remove script element as this will NOT convert to XML
-        var svgStart = svg.split("<script type=\"application/ecmascript\">")[0];
-        var svgEnd = svg.split("</script>")[1];
-        svg = svgStart + svgEnd;
-    }
-    return svg;
-}
-
-JOrganisationChart.prototype.getImageDownloadLink = function (svgElement, linkText) {
+/**
+ * Returns a <a href ...> html link to a download of your Chart as an image (Webkit only!) or instructions on how to save (IE).
+ *
+ * @param {Element Object} svgElement - Required, the SVG tag element the Chart is using.
+ * @param {string} - linkText - Required, the text that will be displaying in the returned link.
+ * @return {Element} - A Link
+ */
+JSVGOrganisationChart.prototype.getImageDownloadLink = function (svgElement, linkText) {
 
     var alink = document.createElement("a");
     alink.text = "For IE right click and select 'Save picture as'";
@@ -160,44 +139,13 @@ JOrganisationChart.prototype.getImageDownloadLink = function (svgElement, linkTe
     return alink;
 }
 
-JOrganisationChart.prototype.drawToCanvas = function (svgElement, canvasElement, linkElement, linkText) {
-
-    var width = 100;
-    var height = 100;
-
-    if (svgElement != undefined && canvasElement != undefined) {
-        width = parseInt(svgElement.getAttribute("width"));
-        height = parseInt(svgElement.getAttribute("height"));
-
-        canvasElement.width = width;
-        canvasElement.height = height;
-        context = canvasElement.getContext("2d");
-
-        var imgsrc = 'data:image/svg+xml;base64,' + window.btoa(this.getSVGXML(svgElement));
-
-        var image = new Image;
-        image.src = imgsrc;
-        image.onload = function () {
-            context.drawImage(image, 0, 0);
-
-            if (linkElement != undefined) {
-                try {
-                    var canvasdata = canvasElement.toDataURL("image/png");
-                    linkElement.download = "OrganisationChart.png";
-                    linkElement.href = canvasdata;
-                    linkElement.text = linkText;
-
-                } catch (exception) {
-
-                }
-            }
-
-        };
-    }
-
-}
-
-JOrganisationChart.prototype.findGroup = function(groupid)
+/**
+ * Finds a Group by its id in the Chart Data Structure.
+ *
+ * @param {string} groupid - Required, the Group Id to find.
+ * @return {Group Object} - Group object found or undefined.
+ */
+JSVGOrganisationChart.prototype.findGroup = function (groupid)
 {
     if (this.data.groups != undefined && this.data.groups.length > 0) {
 
@@ -206,7 +154,14 @@ JOrganisationChart.prototype.findGroup = function(groupid)
     return undefined;
 }
 
-JOrganisationChart.prototype.findNode = function (groupid,nodeid) {
+/**
+ * Finds a Node by its Node id and its Group Id in the Chart Data Structure.
+ *
+ * @param {string} groupid - Required, the Group Id to find.
+ * @param {string} nodeid - Required, the Node Id within the Group to find.
+ * @return {Node Object} - Node object found or undefined.
+ */
+JSVGOrganisationChart.prototype.findNode = function (groupid, nodeid) {
     if (this.data.groups != undefined && this.data.groups.length > 0) {
         var group = this.find(groupid, this.data.groups);
         if(group != undefined && group.nodes != undefined)
@@ -217,7 +172,18 @@ JOrganisationChart.prototype.findNode = function (groupid,nodeid) {
     return undefined;
 }
 
-JOrganisationChart.prototype.addGroup = function (parentid, groupid, groupName, groupStyle, groupOnclick, groupOnmouseover, groupOnmouseout) {
+/**
+ * Adds a new Group to the existing Chart Data Structure.
+ *
+ * @param {string} parentid - Optional, the Group to add this new Group under (if any).
+ * @param {string} groupid - Required, the id of your new group.
+ * @param {string} groupName - Optional, the name/title to be display in the Group.
+ * @param {string} groupStyle - Optional, the style string for the Groups bounding box.
+ * @param {string} groupOnclick - Optional, the Javascript string to run on the Click of the Group.
+ * @param {string} groupOnclick - Optional, the Javascript string to run on the Mouse Over of the Group.
+ * @param {string} groupOnclick - Optional, the Javascript string to run on the Mouse Out of the Group.
+ */
+JSVGOrganisationChart.prototype.addGroup = function (parentid, groupid, groupName, groupStyle, groupOnclick, groupOnmouseover, groupOnmouseout) {
     var parentGroup = undefined;
 
     if (parentid != undefined) {
@@ -259,7 +225,19 @@ JOrganisationChart.prototype.addGroup = function (parentid, groupid, groupName, 
     this.drawChart(this.svgElement, this.data);
 }
 
-JOrganisationChart.prototype.addOrphanNode = function (groupid, nodeid, nodeTitle, nodeText, nodeStyle, nodeOnclick, nodeOnmouseover, nodeOnmouseout) {
+/**
+ * Adds a new Orphan Node (unlinked, a label perhaps) to an existing Group in the Chart Data Structure.
+ *
+ * @param {string} groupid - Required, the id of your Orphaned Node's Group.
+ * @param {string} nodeid - Required, the id of your new Orphaned Node.
+ * @param {string} nodeTitle - Optional, name/title to be display in the Node.
+ * @param {string[]} nodeText - Optional, A String Array of the text lines to display within the node.
+ * @param {string} nodeStyle -  Optional, the style string for the Nodes bounding box.
+ * @param {string} nodeOnclick - Optional, the Javascript string to run on the Click of the Node.
+ * @param {string} nodeOnmouseover - Optional, the Javascript string to run on the Mouse Over of the Node.
+ * @param {string} nodeOnmouseout - Optional, the Javascript string to run on the Mouse Out of the Node.
+ */
+JSVGOrganisationChart.prototype.addOrphanNode = function (groupid, nodeid, nodeTitle, nodeText, nodeStyle, nodeOnclick, nodeOnmouseover, nodeOnmouseout) {
     var group = undefined;
 
     if (groupid != undefined) {
@@ -313,7 +291,20 @@ JOrganisationChart.prototype.addOrphanNode = function (groupid, nodeid, nodeTitl
     this.drawChart(this.svgElement, this.data);
 }
 
-JOrganisationChart.prototype.addNode = function (groupid, parentid, nodeid, nodeTitle, nodeText, nodeStyle, nodeOnclick, nodeOnmouseover, nodeOnmouseout)
+/**
+ * Adds a new Node to an existing Group in the Chart Data Structure.
+ *
+ * @param {string} groupid - Required, the id of your Orphaned Node's Group
+ * @param {string} parentid - Optional, the id of your Nodes Parent Node.
+ * @param {string} nodeid - Required, the id of your new Node
+ * @param {string} nodeTitle - Optional, name/title to be display in the Node
+ * @param {string[]} nodeText - Optional, A String Array of the text lines to display within the Node
+ * @param {string} nodeStyle -  Optional, the style string for the Nodes bounding box.
+ * @param {string} nodeOnclick - Optional, the Javascript string to run on the Click of the Node
+ * @param {string} nodeOnmouseover - Optional, the Javascript string to run on the Mouse Over of the Node
+ * @param {string} nodeOnmouseout - Optional, the Javascript string to run on the Mouse Out of the Node
+ */
+JSVGOrganisationChart.prototype.addNode = function (groupid, parentid, nodeid, nodeTitle, nodeText, nodeStyle, nodeOnclick, nodeOnmouseover, nodeOnmouseout)
 {
     var group = undefined;
 
@@ -376,32 +367,13 @@ JOrganisationChart.prototype.addNode = function (groupid, parentid, nodeid, node
     this.drawChart(this.svgElement, this.data);
 }
 
-JOrganisationChart.prototype.find = function (id, children)
-{
-    if (children != undefined && children.length > 0) {
-        for (var i = 0; i < children.length; i++)
-        {
-            if (children[i] != undefined && children[i].id != undefined && children[i].id == id)
-            {
-                return children[i];
-            }
-        }
-
-        //Check for Id in children
-        for (var i = 0; i < children.length; i++) {
-            if (children[i] != undefined && children[i].children != undefined && children[i].children.length > 0) {
-                var found = this.find(id, children[i].children);
-                if (found != undefined)
-                {
-                    return found;
-                }
-            }
-        }
-    }
-    return undefined;
-}
-
-JOrganisationChart.prototype.drawChart = function(svgElement, chartData){
+/**
+ * Draws the Chart to the svgElement passed in.
+ *
+ * @param {Element Object} svgElement - Required, the SVG element to draw to.
+ * @param {ChartData Object} chartData - Required, the Chart Data structure to draw.
+ */
+JSVGOrganisationChart.prototype.drawChart = function (svgElement, chartData) {
     if (chartData != undefined) {
 
         if (chartData.groups != undefined) {
@@ -423,7 +395,13 @@ JOrganisationChart.prototype.drawChart = function(svgElement, chartData){
     }
 }
 
-JOrganisationChart.prototype.getChartSize = function (chartData) {
+/**
+ * Uses the passed in Chart Data structure and current Settings to calculate the Chart overall dimensions in Px.
+ *
+ * @param {ChartData Object} chartData - Required, the Chart Data structure to draw.
+ * @return {Dimensions Object} - Dimension Object containing Width and Height.
+ */
+JSVGOrganisationChart.prototype.getChartSize = function (chartData) {
 
     if (chartData == undefined)
     {
@@ -433,7 +411,67 @@ JOrganisationChart.prototype.getChartSize = function (chartData) {
     return this.calculateRowSize(chartData.groups, this.settings, true);
 }
 
-JOrganisationChart.prototype.calculateTotalChildRowHeight = function (items, settings) {
+/** Private Methods */
+
+JSVGOrganisationChart.prototype.find = function (id, children) {
+    if (children != undefined && children.length > 0) {
+        for (var i = 0; i < children.length; i++) {
+            if (children[i] != undefined && children[i].id != undefined && children[i].id == id) {
+                return children[i];
+            }
+        }
+
+        //Check for Id in children
+        for (var i = 0; i < children.length; i++) {
+            if (children[i] != undefined && children[i].children != undefined && children[i].children.length > 0) {
+                var found = this.find(id, children[i].children);
+                if (found != undefined) {
+                    return found;
+                }
+            }
+        }
+    }
+    return undefined;
+}
+
+JSVGOrganisationChart.prototype.drawToCanvas = function (svgElement, canvasElement, linkElement, linkText) {
+
+    var width = 100;
+    var height = 100;
+
+    if (svgElement != undefined && canvasElement != undefined) {
+        width = parseInt(svgElement.getAttribute("width"));
+        height = parseInt(svgElement.getAttribute("height"));
+
+        canvasElement.width = width;
+        canvasElement.height = height;
+        context = canvasElement.getContext("2d");
+
+        var imgsrc = 'data:image/svg+xml;base64,' + window.btoa(this.getSVGXML(svgElement));
+
+        var image = new Image;
+        image.src = imgsrc;
+        image.onload = function () {
+            context.drawImage(image, 0, 0);
+
+            if (linkElement != undefined) {
+                try {
+                    var canvasdata = canvasElement.toDataURL("image/png");
+                    linkElement.download = "OrganisationChart.png";
+                    linkElement.href = canvasdata;
+                    linkElement.text = linkText;
+
+                } catch (exception) {
+
+                }
+            }
+
+        };
+    }
+
+}
+
+JSVGOrganisationChart.prototype.calculateTotalChildRowHeight = function (items, settings) {
     var maxHeight = 0;
 
     if ((items != undefined) && (items.length > 0)) {
@@ -454,7 +492,7 @@ JOrganisationChart.prototype.calculateTotalChildRowHeight = function (items, set
     return maxHeight;
 }
 
-JOrganisationChart.prototype.calculateTotalChildRowWidth = function (parentWidth, items, settings)
+JSVGOrganisationChart.prototype.calculateTotalChildRowWidth = function (parentWidth, items, settings)
 {
     var totalWidth = 0;
 
@@ -488,7 +526,7 @@ JOrganisationChart.prototype.calculateTotalChildRowWidth = function (parentWidth
     return totalWidth;
 }
 
-JOrganisationChart.prototype.calculateRowSize = function (items, settings, includeChildren) {
+JSVGOrganisationChart.prototype.calculateRowSize = function (items, settings, includeChildren) {
 
     var dimensions = { width: 0, height: 0 };
 
@@ -536,7 +574,7 @@ JOrganisationChart.prototype.calculateRowSize = function (items, settings, inclu
     return dimensions;
 }
 
-JOrganisationChart.prototype.calculateSize = function (item, settings, includeMargins) {
+JSVGOrganisationChart.prototype.calculateSize = function (item, settings, includeMargins) {
 
     var dimensions = { width: 0, height: 0 };
 
@@ -551,7 +589,8 @@ JOrganisationChart.prototype.calculateSize = function (item, settings, includeMa
     }
     return dimensions;
 }
-JOrganisationChart.prototype.calculateNodeSize = function (nodeData, settings, includeMargins) {
+
+JSVGOrganisationChart.prototype.calculateNodeSize = function (nodeData, settings, includeMargins) {
 	var dimensions = { width: 0, height: 0 };
 
 	if (nodeData != undefined)
@@ -622,7 +661,7 @@ JOrganisationChart.prototype.calculateNodeSize = function (nodeData, settings, i
 	return dimensions;
 };
 
-JOrganisationChart.prototype.calculateGroupSize = function (group, settings, includeMargins) {
+JSVGOrganisationChart.prototype.calculateGroupSize = function (group, settings, includeMargins) {
     var dimensions = { width: 0, height: 0 };
 
     if (group != undefined) {
@@ -668,7 +707,7 @@ JOrganisationChart.prototype.calculateGroupSize = function (group, settings, inc
     return dimensions;
 }
 
-JOrganisationChart.prototype.calculateTextWidth = function(text,fontSize)
+JSVGOrganisationChart.prototype.calculateTextWidth = function (text, fontSize)
 {
     var width = 0;
     for (var i = 0;i < text.length;i++)
@@ -685,7 +724,7 @@ JOrganisationChart.prototype.calculateTextWidth = function(text,fontSize)
     return width;
 }
 
-JOrganisationChart.prototype.drawGroupRow = function (cx, cy, svgElement, groups, settings, isFirstNode) {
+JSVGOrganisationChart.prototype.drawGroupRow = function (cx, cy, svgElement, groups, settings, isFirstNode) {
 
     if (groups != undefined && groups.length > 0) {
         var groupRowMaxDimensions = this.calculateRowSize(groups, settings, true);
@@ -728,7 +767,7 @@ JOrganisationChart.prototype.drawGroupRow = function (cx, cy, svgElement, groups
     }
 }
 
-JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group, settings) {
+JSVGOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group, settings) {
     if (group != undefined) {
         var grpDimensions = this.calculateGroupSize(group, settings)
 
@@ -799,7 +838,7 @@ JOrganisationChart.prototype.drawGroup = function (cx, cy, svgElement, group, se
     }
 }
 
-JOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, groupid, nodes, settings, isFirstNode) {
+JSVGOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, groupid, nodes, settings, isFirstNode) {
 
     if (nodes != undefined && nodes.length > 0)
     {
@@ -845,7 +884,7 @@ JOrganisationChart.prototype.drawNodeRow = function (cx, cy, svgElement, groupid
     }
 }
 
-JOrganisationChart.prototype.drawConnection = function (cx1, cy1, cx2, cy2, margin, lineStyle, svgElement, settings)
+JSVGOrganisationChart.prototype.drawConnection = function (cx1, cy1, cx2, cy2, margin, lineStyle, svgElement, settings)
 {
     if(svgElement != undefined)
     {
@@ -875,7 +914,7 @@ JOrganisationChart.prototype.drawConnection = function (cx1, cy1, cx2, cy2, marg
     }
 }
 
-JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, groupid, nodeData, settings) {
+JSVGOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, groupid, nodeData, settings) {
 
     if (nodeData != undefined && svgElement != undefined)
 	{
@@ -1013,3 +1052,39 @@ JOrganisationChart.prototype.drawNode = function (cx, cy, svgElement, groupid, n
         }
 	}
 };
+
+JSVGOrganisationChart.prototype.getFontSizeFromStyle = function (style) {
+    var fontSize = 12;
+
+    if (style != undefined) {
+        var parts = style.split(';');
+
+        if (parts != undefined && parts.length > 0) {
+            for (var i = 0; i < parts.length; i++) {
+                if (parts[i].indexOf('font-size:') > -1) {
+                    fontSize = Number(parts[i].replace('font-size:', '').replace('px', ''));
+                    break;
+                }
+            }
+        }
+    }
+    return fontSize;
+
+}
+
+JSVGOrganisationChart.prototype.getSVGXML = function (svgElement) {
+    var svg = '<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
+
+    if (svgElement != undefined) {
+        var outer = document.createElement('div');
+        outer.appendChild(svgElement.cloneNode(true));
+
+        svg = svg + outer.innerHTML;
+
+        //Remove script element as this will NOT convert to XML
+        var svgStart = svg.split("<script type=\"application/ecmascript\">")[0];
+        var svgEnd = svg.split("</script>")[1];
+        svg = svgStart + svgEnd;
+    }
+    return svg;
+}

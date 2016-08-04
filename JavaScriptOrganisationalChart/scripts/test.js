@@ -108,7 +108,7 @@
     }
 
 
-    var chart = new JOrganisationChart(document.getElementById("mySVG"), charData);
+    var chart = new JSVGOrganisationChart(document.getElementById("mySVG"), charData);
 
     var linkElement = chart.getImageDownloadLink(document.getElementById("mySVG"), "Click to Download");
     document.body.appendChild(linkElement);
