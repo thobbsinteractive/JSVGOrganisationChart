@@ -109,9 +109,12 @@ Why not use Google's Structure Chart instead?
 </html>
 ```
 
-#### Interactivity ####
+#### Need basic interactivity? ####
+Using built in methods you can set attributes using setStyle(...) or navigate or open a new tab using the openTo(...) and navigateTo(...) methods.
 
-![alt text](https://github.com/thobbsinteractive/JOrganisationChart/blob/master/interactiveSVGChartExample.png "Interactive Chart")
+The example below sets style attributes on mouse over/mouse out and Navigates when a node is clicked.
+
+![alt text](https://github.com/thobbsinteractive/JOrganisationChart/blob/master/InteractiveSVGChartExample.png "Interactive Chart")
 
 ```
 <!DOCTYPE html>
