@@ -132,7 +132,7 @@
     //chart.addNode("102", undefined, "301", "Added Node", ["Added Sub"]);
     //chart.addNode("4", "16", "303", "Added Node", ["Added Sub"]);
 
-    //var chart = new JOrganisationChart(document.getElementById("mySVG"));
+    //var chart = new JSVGOrganisationChart(document.getElementById("mySVG"));
     //chart.addGroup(undefined, "Grp1", "Directors");
     //chart.addNode("Grp1", undefined, "Node1", "Mr Director", ["Manager", "Runs Everything"]);
     //chart.addNode("Grp1", undefined, "Node2", "Mrs Money", ["Finance Manager", "Pays for Everything"]);
@@ -149,6 +149,7 @@
     //chart.addGroup("Grp1", "Grp3", "Support Team");
     //chart.addNode("Grp3", undefined, "Node3.1", "Mrs Support Manager", ["Business Manager", "Orders Lackies"]);
     //chart.addNode("Grp3", "Node3.1", "Node3.1.1", "Mr", ["1st Line Support", "Phone Jocky"]);
+    //chart.drawChart();
 
     //var settings = {
     //    nodeTextColour: "rgba(0,0,0,1)",
@@ -161,7 +162,7 @@
     //    chartBackgroundColour: "fill:rgba(255,255,255,1);stroke:rgba(220,220,220,1);stroke-width:0;"
     //}
 
-    //var chart = new JOrganisationChart(document.getElementById("mySVG"), undefined, settings);
+    //var chart = new JSVGOrganisationChart(document.getElementById("mySVG"), undefined, settings);
     //chart.addGroup(undefined, "Grp1", undefined);
     //chart.addNode("Grp1", undefined, "Node1", "Mr Director", ["Manager", "Runs Everything"]);
     //chart.addNode("Grp1", "Node1", "Node1.1", "Mrs Finance Director", ["Accountant", "Pays for somethings"]);
@@ -170,6 +171,21 @@
     //chart.addNode("Grp1", "Node1.1", "Node1.1.1", "Mr Cleaner", ["Cleaner", "Cleans"]);
     //chart.addNode("Grp1", "Node1.1", "Node1.1.2", "Mr Shopfloor", ["Head of Sales", "Sells Everything"]);
     //chart.addNode("Grp1", "Node1.3", "Node1.3.1", "Mr John Hummer", ["Muscian", "Sound Track to the 80s"]);
+    //chart.drawChart();
 
-
+    //var chart = new JSVGOrganisationChart(document.getElementById("mySVG"));
+    //chart.addGroup(undefined, "Grp1", "Interactivity Demo");
+    //chart.addNode("Grp1", undefined, "Node1", "BBC", ["Click Navigates", "to BBC"], undefined,
+    //    "navigateTo(event,'http://www.bbc.co.uk')",
+    //    "setStyle(event,'fill:rgba(217,227,235,1);cursor:pointer;','cursor:pointer;','cursor:pointer;')",
+    //    "setStyle(event,'fill:rgba(255,255,255,1);cursor:default;','cursor:default;','cursor:default;')");
+    //chart.addNode("Grp1", "Node1", "Node1.1", "Google", ["Click Opens Tab", "to Google"], undefined,
+    //    "openTo(event,'http://www.google.co.uk')",
+    //    "setStyle(event,'fill:rgba(217,227,235,1);cursor:pointer;','cursor:pointer;','cursor:pointer;')",
+    //    "setStyle(event,'fill:rgba(255,255,255,1);cursor:default;','cursor:default;','cursor:default;')");
+    //chart.addNode("Grp1", "Node1", "Node1.2", "Nothing ", ["Click Does Nothing"], undefined,
+    //    undefined,
+    //    "setStyle(event,'fill:rgba(217,227,235,1);cursor:pointer;','cursor:pointer;','cursor:pointer;')",
+    //    "setStyle(event,'fill:rgba(255,255,255,1);cursor:auto;','cursor:default;','cursor:default;')");
+    //chart.drawChart();
 });

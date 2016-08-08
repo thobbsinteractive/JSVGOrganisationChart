@@ -71,11 +71,12 @@ function JSVGOrganisationChart(svgElement, chartData, settings)
                 '}\n' +
                 'function setStyle(event, nodeStyle, titleStyle, textStyle) {\n' +
                 '   if(event.target != undefined && nodeStyle != undefined) {\n' +
+                '       var nodeElement = undefined;\n' +
+                '       \n' +
                 '       if(event.target.nodeName == "text" && (event.target.getAttribute("data-type") == "title" || event.target.getAttribute("data-type") == "text")) {\n' +
                 '           if (event.target.getAttribute("data-parentid") != undefined) {\n' +
                 '               var parentid = event.target.getAttribute("data-parentid");\n' +
                 '               var elements = document.getElementsByTagName("rect");\n' +
-                '               var nodeElement = undefined;\n' +
                 '               for (i = 0; i < elements.length; i++) {\n' +
                 '                   if(elements[i].getAttribute("data-id") == parentid)\n' +
                 '                   {\n' +
@@ -83,19 +84,37 @@ function JSVGOrganisationChart(svgElement, chartData, settings)
                 '                       break;\n' +
                 '                   }\n' +
                 '               }\n' +
-                '               if(nodeElement != undefined){\n' +
-                '                   nodeElement.setAttribute("style",nodeStyle);\n' +
-                '               }\n' +
                 '           }\n' +
                 '           if(event.target.getAttribute("data-type") == "title") {\n' +
-                '               event.target.setAttribute("style",titleStyle);\n' +
+                '               setStyleProperties(event.target,titleStyle);\n' +
                 '           }\n' +
                 '           if(event.target.getAttribute("data-type") == "text") {\n' +
-                '               event.target.setAttribute("style", textStyle);\n' +
+                '               setStyleProperties(event.target,textStyle);\n' +
                 '           }\n' +
                 '       }\n' +
-                '       else {\n' +
-                '           event.target.setAttribute("style",nodeStyle);\n' +
+                '       else if(event.target.nodeName == "rect") {\n' +
+                '           nodeElement = event.target;\n' +
+                '       }\n' +
+                '       \n' +
+                '       if(nodeElement != undefined){\n' +
+                '           setStyleProperties(nodeElement,nodeStyle);\n' +
+                '           console.log("Setting nodeElement: x:" + nodeElement.x.animVal.value + " y:" + nodeElement.y.animVal.value + " Style to: " + nodeStyle);\n' +
+                '       }\n' +
+                '   }\n' +
+                '}\n' +
+                'function setStyleProperties(element, styleStr) {\n' +
+                '   if(element != undefined && styleStr != undefined)\n' +
+                '   {\n' +
+                '       styleStr = styleStr.replace(" ","");\n' +
+                '       var attrs = styleStr.split(";");\n' +
+                '       for (i = 0; i < attrs.length; i++)\n' +
+                '       {\n' +
+                '           var key = attrs[i].split(":")[0];\n' +
+                '           var value = attrs[i].split(":")[1];\n' +
+                '           if(key != "")\n' +
+                '           {\n' +
+                '               element.style.setProperty(key,value);\n' +
+                '           }\n' +
                 '       }\n' +
                 '   }\n' +
                 '}\n'
@@ -221,8 +240,6 @@ JSVGOrganisationChart.prototype.addGroup = function (parentid, groupid, groupNam
             });
         }
     }
-
-    this.drawChart(this.svgElement, this.data);
 }
 
 /**
@@ -363,18 +380,27 @@ JSVGOrganisationChart.prototype.addNode = function (groupid, parentid, nodeid, n
             });
         }
     }
-
-    this.drawChart(this.svgElement, this.data);
 }
 
 /**
  * Draws the Chart to the svgElement passed in.
  *
- * @param {Element Object} svgElement - Required, the SVG element to draw to.
- * @param {ChartData Object} chartData - Required, the Chart Data structure to draw.
+ * @param {Element Object} svgElement - Optional (if set in constructor), the SVG element to draw to.
+ * @param {ChartData Object} chartData - Required (if set in constructor), the Chart Data structure to draw.
  */
 JSVGOrganisationChart.prototype.drawChart = function (svgElement, chartData) {
-    if (chartData != undefined) {
+
+    if (svgElement == undefined)
+    {
+        svgElement = this.svgElement;
+    }
+
+    if (chartData == undefined)
+    {
+        chartData = this.data;
+    }
+
+    if (svgElement != undefined && chartData != undefined) {
 
         if (chartData.groups != undefined) {
             var dimensions = this.calculateRowSize(chartData.groups, this.settings, true);
