@@ -109,7 +109,7 @@ Why not use Google's Structure Chart instead?
 </html>
 ```
 
-#### Need basic interactivity? ####
+#### Need basic Interactivity? ####
 Using built in methods you can set attributes using setStyle(...) or navigate or open a new tab using the openTo(...) and navigateTo(...) methods.
 
 The example below sets style attributes on mouse over/mouse out and Navigates when a node is clicked.
