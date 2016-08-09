@@ -52,6 +52,7 @@ Why not use Google's Structure Chart instead?
     chart.addGroup("Grp1", "Grp3", "Support Team");
     chart.addNode("Grp3", undefined, "Node3.1", "Mrs Support Manager", ["Business Manager", "Orders Lackies"]);
     chart.addNode("Grp3", "Node3.1", "Node3.1.1", "Mr", ["1st Line Support", "Phone Jocky"]);
+    chart.drawChart();
 ```
 ```
     </script>
@@ -100,6 +101,53 @@ Why not use Google's Structure Chart instead?
     chart.addNode("Grp1", "Node1.1", "Node1.1.1", "Mr Cleaner", ["Cleaner", "Cleans"]);
     chart.addNode("Grp1", "Node1.1", "Node1.1.2", "Mr Shopfloor", ["Head of Sales", "Sells Everything"]);
     chart.addNode("Grp1", "Node1.3", "Node1.3.1", "Mr John Hummer", ["Muscian", "Sound Track to the 80s"]);
+    chart.drawChart();
+```
+```
+    </script>
+</body>
+</html>
+```
+
+#### Need basic Interactivity? ####
+Using built in methods you can set attributes using setStyle(...) or navigate or open a new tab using the openTo(...) and navigateTo(...) methods.
+
+The example below sets style attributes on mouse over/mouse out and Navigates when a node is clicked.
+
+![alt text](https://github.com/thobbsinteractive/JOrganisationChart/blob/master/InteractiveSVGChartExample.png "Interactive Chart")
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <script src="scripts/jorg-chart-1.0.js"></script>
+</head>
+<body>
+    <svg xmlns="http://www.w3.org/2000/svg" id="mySVG">
+        Sorry, your browser does not support inline SVG necessary for this chart.
+    </svg>
+    <script>
+```
+```javascript
+
+    var chart = new JSVGOrganisationChart(document.getElementById("mySVG"));
+    chart.addGroup(undefined, "Grp1", "Interactivity Demo");
+    chart.addNode("Grp1", undefined, "Node1", "BBC", ["Click Navigates", "to BBC"], undefined,
+        "navigateTo(event,'http://www.bbc.co.uk')",
+        "setStyle(event,'fill:rgba(217,227,235,1);cursor:pointer;','cursor:pointer;','cursor:pointer;')",
+        "setStyle(event,'fill:rgba(255,255,255,1);cursor:default;','cursor:default;','cursor:default;')");
+    chart.addNode("Grp1", "Node1", "Node1.1", "Google", ["Click Opens Tab", "to Google"], undefined,
+        "openTo(event,'http://www.google.co.uk')",
+        "setStyle(event,'fill:rgba(217,227,235,1);cursor:pointer;','cursor:pointer;','cursor:pointer;')",
+        "setStyle(event,'fill:rgba(255,255,255,1);cursor:default;','cursor:default;','cursor:default;')");
+    chart.addNode("Grp1", "Node1", "Node1.2", "Nothing ", ["Click Does Nothing"], undefined,
+        undefined,
+        "setStyle(event,'fill:rgba(217,227,235,1);cursor:pointer;','cursor:pointer;','cursor:pointer;')",
+        "setStyle(event,'fill:rgba(255,255,255,1);cursor:auto;','cursor:default;','cursor:default;')");
+    chart.drawChart();
+    
 ```
 ```
     </script>
