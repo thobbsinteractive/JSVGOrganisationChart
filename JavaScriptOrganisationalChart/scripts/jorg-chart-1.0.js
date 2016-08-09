@@ -98,7 +98,6 @@ function JSVGOrganisationChart(svgElement, chartData, settings)
                 '       \n' +
                 '       if(nodeElement != undefined){\n' +
                 '           setStyleProperties(nodeElement,nodeStyle);\n' +
-                '           console.log("Setting nodeElement: x:" + nodeElement.x.animVal.value + " y:" + nodeElement.y.animVal.value + " Style to: " + nodeStyle);\n' +
                 '       }\n' +
                 '   }\n' +
                 '}\n' +
