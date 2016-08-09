@@ -56,7 +56,7 @@ function JSVGOrganisationChart(svgElement, chartData, settings)
 	if (svgElement != undefined)
 	{
 	    //Default built-in functions
-        var chartMethods = ''+
+	    var chartMethods = '' +
                 'function navigateTo(event, url) {\n' +
                 '   if(event.target != undefined && url != undefined)\n' +
                 '   {\n' +
@@ -158,6 +158,44 @@ JSVGOrganisationChart.prototype.getImageDownloadLink = function (svgElement, lin
 }
 
 /**
+ * Clears the current Chart SVG from the SVG Element
+ *
+ * @param {Element Object} svgElement - Optional (if set in constructor), the SVG element to clear.
+ */
+JSVGOrganisationChart.prototype.clearChart = function (svgElement) {
+    if(svgElement == undefined)
+    {
+        svgElement = this.svgElement;
+    }
+
+    if(svgElement != undefined)
+    {
+        var rects = svgElement.getElementsByTagName("rect");
+        var texts = svgElement.getElementsByTagName("text");
+        var lines = svgElement.getElementsByTagName("line");
+
+        if (rects != undefined && rects.length > 0)
+        {
+            for(var i = rects.length - 1; i >= 0; i--) {
+                svgElement.removeChild(rects[i]);
+            }
+        }
+
+        if (texts != undefined && texts.length > 0) {
+            for (var i = texts.length - 1; i >= 0; i--) {
+                svgElement.removeChild(texts[i]);
+            }
+        }
+
+        if (lines != undefined && lines.length > 0) {
+            for (var i = lines.length - 1; i >= 0; i--) {
+                svgElement.removeChild(lines[i]);
+            }
+        }
+    }
+}
+
+/**
  * Finds a Group by its id in the Chart Data Structure.
  *
  * @param {string} groupid - Required, the Group Id to find.
@@ -191,7 +229,7 @@ JSVGOrganisationChart.prototype.findNode = function (groupid, nodeid) {
 }
 
 /**
- * Adds a new Group to the existing Chart Data Structure.
+ * Adds a new Group or replaces and existing group in the Chart Data Structure.
  *
  * @param {string} parentid - Optional, the Group to add this new Group under (if any).
  * @param {string} groupid - Required, the id of your new group.
@@ -202,20 +240,39 @@ JSVGOrganisationChart.prototype.findNode = function (groupid, nodeid) {
  * @param {string} groupOnclick - Optional, the Javascript string to run on the Mouse Out of the Group.
  */
 JSVGOrganisationChart.prototype.addGroup = function (parentid, groupid, groupName, groupStyle, groupOnclick, groupOnmouseover, groupOnmouseout) {
-    var parentGroup = undefined;
 
-    if (parentid != undefined) {
-        if (this.data.groups != undefined && this.data.groups.length > 0) {
-            var parentGroup = this.find(parentid, this.data.groups);
+    //Check group does not already exist.
+    var existingGroup = this.findGroup(groupid)
+
+    if (existingGroup != undefined) {
+        //Update existing group (whereever it is)
+        existingGroup.title = groupName;
+        existingGroup.groupStyle = groupStyle;
+        existingGroup.onclick = groupOnclick;
+        existingGroup.onmouseover = groupOnmouseover;
+        existingGroup.onmouseout = groupOnmouseout;
+
+    } else {
+
+        //Create new
+        var parentGroup = undefined;
+
+        if (parentid != undefined) {
+            if (this.data.groups != undefined && this.data.groups.length > 0) {
+                var parentGroup = this.find(parentid, this.data.groups);
+            }
         }
-    }
 
-    if (parentGroup != undefined) {
-        if (parentGroup.children == undefined) {
-            parentGroup.children = [];
+        var children = this.data.groups;
+
+        if (parentGroup != undefined) {
+            if (parentGroup.children == undefined) {
+                parentGroup.children = [];
+            }
+            children = parentGroup.children;
         }
-
-        parentGroup.children.push({
+       
+        children.push({
             id: groupid,
             title: groupName,
             type: "Group",
@@ -225,19 +282,6 @@ JSVGOrganisationChart.prototype.addGroup = function (parentid, groupid, groupNam
             onmouseover: groupOnmouseover,
             onmouseout: groupOnmouseout
         });
-    } else {
-        if (this.data.groups != undefined) {
-            this.data.groups.push({
-                id: groupid,
-                title: groupName,
-                type: "Group",
-                nodes: [],
-                groupStyle: groupStyle,
-                onclick: groupOnclick,
-                onmouseover: groupOnmouseover,
-                onmouseout: groupOnmouseout
-            });
-        }
     }
 }
 
@@ -263,44 +307,63 @@ JSVGOrganisationChart.prototype.addOrphanNode = function (groupid, nodeid, nodeT
     }
 
     if (group != undefined) {
-        var parentNode = undefined;
 
-        if (parentid != undefined) {
-            if (group.nodes != undefined && group.nodes.length > 0) {
-                parentNode = this.find(parentid, group.nodes);
-            }
+        var existingNode = this.findNode(groupid, nodeid);
 
-            if (parentNode != undefined) {
-                if (parentNode.children == undefined) {
-                    parentNode.children = [];
+        if (existingNode != undefined)
+        {
+            //Update existing node (where ever it is)
+            existingNode.title = nodeTitle;
+            existingNode.text = nodeText;
+            existingNode.text = nodeText;
+            existingNode.nodeStyle = nodeStyle;
+            existingNode.onmouseover = nodeOnmouseover;
+            existingNode.onmouseout = nodeOnmouseout;
+        } else
+        {
+            //Add New
+            var parentNode = undefined;
+
+            if (parentid != undefined) {
+                if (group.nodes != undefined && group.nodes.length > 0) {
+                    parentNode = this.find(parentid, group.nodes);
                 }
 
-                parentNode.children.push({
+                if (parentNode != undefined) {
+                    if (parentNode.children == undefined) {
+                        parentNode.children = [];
+                    }
+
+                    parentNode.children.push({
+                        id: nodeid,
+                        title: nodeTitle,
+                        type: "OrphanNode",
+                        text: nodeText,
+                        children: [],
+                        nodeStyle: nodeStyle,
+                        onclick: nodeOnclick,
+                        onmouseover: nodeOnmouseover,
+                        onmouseout: nodeOnmouseout
+                    });
+                }
+            } else {
+                if (group.nodes == undefined) {
+                    group.nodes = [];
+                }
+
+                group.nodes.push({
                     id: nodeid,
                     title: nodeTitle,
                     type: "OrphanNode",
                     text: nodeText,
-                    children: nodeChildren,
+                    children: [],
+                    nodeStyle: nodeStyle,
                     onclick: nodeOnclick,
                     onmouseover: nodeOnmouseover,
                     onmouseout: nodeOnmouseout
                 });
             }
-        } else {
-            if (group.nodes == undefined) {
-                group.nodes = [];
-            }
 
-            group.nodes.push({
-                id: nodeid,
-                title: nodeTitle,
-                type: "OrphanNode",
-                text: nodeText,
-                children: nodeChildren,
-                onclick: nodeOnclick,
-                onmouseover: nodeOnmouseover,
-                onmouseout: nodeOnmouseout
-            });
         }
     }
 
@@ -308,7 +371,7 @@ JSVGOrganisationChart.prototype.addOrphanNode = function (groupid, nodeid, nodeT
 }
 
 /**
- * Adds a new Node to an existing Group in the Chart Data Structure.
+ * Adds a new Node or Replaces an existing Node in an existing Group in the Chart Data Structure.
  *
  * @param {string} groupid - Required, the id of your Orphaned Node's Group
  * @param {string} parentid - Optional, the id of your Nodes Parent Node.
@@ -334,49 +397,58 @@ JSVGOrganisationChart.prototype.addNode = function (groupid, parentid, nodeid, n
 
     if(group != undefined)
     {
-        var parentNode = undefined;
+        var existingNode = this.findNode(groupid, nodeid);
 
-        if (parentid != undefined) {
-            if (group.nodes != undefined && group.nodes.length > 0) {
-                parentNode = this.find(parentid, group.nodes);
-            }
+        if (existingNode != undefined) {
+            //Update existing node (where ever it is)
+            existingNode.title = nodeTitle;
+            existingNode.text = nodeText;
+            existingNode.nodeStyle = nodeStyle;
+            existingNode.onclick = nodeOnclick;
+            existingNode.onmouseover = nodeOnmouseover;
+            existingNode.onmouseout = nodeOnmouseout;
+        } else {
+            //Add New
+            var parentNode = undefined;
 
-            if(parentNode != undefined)
-            {
-                if(parentNode.children == undefined)
-                {
-                    parentNode.children = [];
+            if (parentid != undefined) {
+                if (group.nodes != undefined && group.nodes.length > 0) {
+                    parentNode = this.find(parentid, group.nodes);
                 }
 
-                parentNode.children.push({
+                if (parentNode != undefined) {
+                    if (parentNode.children == undefined) {
+                        parentNode.children = [];
+                    }
+
+                    parentNode.children.push({
+                        id: nodeid,
+                        title: nodeTitle,
+                        type: "Node",
+                        text: nodeText,
+                        children: [],
+                        nodeStyle: nodeStyle,
+                        onclick: nodeOnclick,
+                        onmouseover: nodeOnmouseover,
+                        onmouseout: nodeOnmouseout
+                    });
+                }
+            } else {
+                if (group.nodes == undefined) {
+                    group.nodes = [];
+                }
+
+                group.nodes.push({
                     id: nodeid,
                     title: nodeTitle,
                     type: "Node",
                     text: nodeText,
                     children: [],
-                    nodeStyle: nodeStyle,
                     onclick: nodeOnclick,
                     onmouseover: nodeOnmouseover,
                     onmouseout: nodeOnmouseout
                 });
             }
-        } else
-        {
-            if(group.nodes == undefined)
-            {
-                group.nodes = [];
-            }
-
-            group.nodes.push({
-                id: nodeid,
-                title: nodeTitle,
-                type: "Node",
-                text: nodeText,
-                children: [],
-                onclick: nodeOnclick,
-                onmouseover: nodeOnmouseover,
-                onmouseout: nodeOnmouseout
-            });
         }
     }
 }
@@ -388,6 +460,8 @@ JSVGOrganisationChart.prototype.addNode = function (groupid, parentid, nodeid, n
  * @param {ChartData Object} chartData - Required (if set in constructor), the Chart Data structure to draw.
  */
 JSVGOrganisationChart.prototype.drawChart = function (svgElement, chartData) {
+
+    this.clearChart();
 
     if (svgElement == undefined)
     {
@@ -408,6 +482,7 @@ JSVGOrganisationChart.prototype.drawChart = function (svgElement, chartData) {
             svgElement.setAttribute("height",(dimensions.height + (this.settings.chartPadding * 2)));
             
             var bkBoxSVG = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            bkBoxSVG.setAttribute('id', 'background');
             bkBoxSVG.setAttribute('x',0);
             bkBoxSVG.setAttribute('y',0);
             bkBoxSVG.setAttribute('width', dimensions.width + (this.settings.chartPadding * 2));
