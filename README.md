@@ -80,19 +80,8 @@ Why not use Google's Structure Chart instead?
 ```
 ```javascript
 
-	//Set some basic global style settings 
-    var settings = {
-        nodeTextColour: "rgba(0,0,0,1)",
-        nodeStyle: "fill:rgba(255,255,255,1);stroke:rgba(0,0,0,1);stroke-width:1;",
-        nodeLineStyle: "stroke:rgba(0,0,0,1);stroke-width:1;",
-        groupPadding: 0,
-        groupMargin: 0,
-        groupStyle: "fill:rgba(255,255,255,1);stroke:rgba(255,255,255,0);stroke-width:0;",
-        chartPadding: 10,
-        chartBackgroundColour: "fill:rgba(255,255,255,1);stroke:rgba(220,220,220,1);stroke-width:0;"
-    }
-
-    var chart = new JOrganisationChart(document.getElementById("mySVG"), undefined, settings);
+    var chart = new JOrganisationChart(document.getElementById("mySVG"));
+    chart.setPlainTheme();
     chart.addGroup(undefined, "Grp1", undefined);
     chart.addNode("Grp1", undefined, "Node1", "Mr Director", ["Manager", "Runs Everything"]);
     chart.addNode("Grp1", "Node1", "Node1.1", "Mrs Finance Director", ["Accountant", "Pays for somethings"]);
