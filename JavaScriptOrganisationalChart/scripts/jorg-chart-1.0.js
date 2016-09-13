@@ -133,6 +133,17 @@ function JSVGOrganisationChart(svgElement, chartData, settings)
 
 /** Public Methods */
 
+JSVGOrganisationChart.prototype.setPlainTheme = function(){
+    this.settings.nodeTextColour = "rgba(0,0,0,1)";
+    this.settings.nodeStyle = "fill:rgba(255,255,255,1);stroke:rgba(0,0,0,1);stroke-width:1;";
+    this.settings.nodeLineStyle = "stroke:rgba(0,0,0,1);stroke-width:1;";
+    this.settings.groupPadding = 0;
+    this.settings.groupMargin = 0;
+    this.settings.groupStyle = "fill:rgba(255,255,255,1);stroke:rgba(255,255,255,0);stroke-width:0;";
+    this.settings.chartPadding = 10;
+    this.settings.chartBackgroundColour = "fill:rgba(255,255,255,1);stroke:rgba(220,220,220,1);stroke-width:0;";
+}
+
 /**
  * Returns a <a href ...> html link to a download of your Chart as an image (Webkit only!) or instructions on how to save (IE).
  *
